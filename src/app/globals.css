@@ -1,0 +1,797 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* stylelint-disable at-rule-no-unknown */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* stylelint-enable at-rule-no-unknown */
+
+/* ----------------------------------------
+
+   GLOBAL BODY & BASE STYLING
+
+----------------------------------------- */
+
+/* stylelint-disable at-rule-no-unknown */
+body {
+  @apply bg-gradient-to-br from-[#0a0f1d] via-[#0f1629] to-[#1a0f2e] text-slate-200 overflow-x-hidden antialiased;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(236, 72, 153, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body>* {
+  position: relative;
+  z-index: 1;
+}
+
+/* stylelint-enable at-rule-no-unknown */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ----------------------------------------
+
+   UNIVERSAL CONTAINER & SECTION SPACING
+
+----------------------------------------- */
+
+/* stylelint-disable at-rule-no-unknown */
+.section {
+  @apply max-w-7xl mx-auto px-6 md:px-10 lg:px-12 py-20 md:py-24;
+}
+
+/* ----------------------------------------
+
+   TITLES / HEADINGS
+
+----------------------------------------- */
+
+.section-title {
+  @apply text-center text-4xl md:text-5xl font-extrabold tracking-tight;
+}
+
+.section-title-gradient {
+  @apply bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent;
+}
+
+.section-sub {
+  @apply text-center text-base opacity-70 mt-2;
+}
+
+/* stylelint-enable at-rule-no-unknown */
+
+/* ----------------------------------------
+
+   NAVBAR STYLING
+
+----------------------------------------- */
+
+/* stylelint-disable at-rule-no-unknown */
+.navbar {
+  @apply fixed top-0 left-0 w-full z-50 backdrop-blur-xl border-b;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.navbar:hover {
+  background-color: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.nav-item {
+  @apply hover:text-white duration-300 cursor-pointer text-slate-300 relative;
+  transition: all 0.3s ease;
+}
+
+.nav-item::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #6366f1, #a855f7);
+  transition: width 0.3s ease;
+}
+
+.nav-item:hover::after {
+  width: 100%;
+}
+
+.navbar-mobile {
+  @apply fixed inset-0 z-40 backdrop-blur-2xl flex flex-col items-center justify-center gap-8 md:hidden;
+  background-color: rgba(15, 23, 42, 0.98);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.nav-mobile-item {
+  @apply text-2xl font-medium hover:text-white duration-300 relative;
+  transition: all 0.3s ease;
+}
+
+.nav-mobile-item::before {
+  content: '';
+  position: absolute;
+  left: -30px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #6366f1, #a855f7);
+  transition: width 0.3s ease;
+}
+
+.nav-mobile-item:hover::before {
+  width: 20px;
+}
+
+/* stylelint-enable at-rule-no-unknown */
+
+/* ----------------------------------------
+
+   BUTTONS (Premium Modern Design)
+
+----------------------------------------- */
+
+/* stylelint-disable at-rule-no-unknown */
+.btn-primary {
+  @apply bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 text-white px-6 py-3.5 rounded-xl shadow-lg font-semibold;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-primary:hover {
+  @apply shadow-glow-md scale-105;
+  transform: translateY(-2px) scale(1.05);
+}
+
+.btn-outline {
+  @apply border-2 border-indigo-500 text-indigo-400 px-6 py-3 rounded-xl font-semibold;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-outline::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+  z-index: -1;
+}
+
+.btn-outline:hover::before {
+  width: 300%;
+  height: 300%;
+}
+
+.btn-outline:hover {
+  @apply text-white border-purple-400;
+}
+
+.btn-soft {
+  @apply hover:opacity-80 duration-300 cursor-pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-soft:hover {
+  transform: translateY(-2px);
+}
+
+.btn-download {
+  @apply px-6 py-3.5 rounded-xl border-2 border-slate-600 hover:bg-slate-800 hover:border-slate-500 duration-300 font-medium;
+  transition: all 0.3s ease;
+}
+
+.btn-download:hover {
+  transform: translateY(-2px);
+  @apply shadow-md;
+}
+
+/* stylelint-enable at-rule-no-unknown */
+
+/* ----------------------------------------
+
+   HERO FLOATING ICONS
+
+----------------------------------------- */
+
+/* stylelint-disable at-rule-no-unknown */
+.float-icon {
+  @apply w-14 h-14 rounded-full flex items-center justify-center text-white text-xl shadow-xl;
+}
+
+.float-purple {
+  @apply bg-gradient-to-br from-indigo-500 to-purple-600;
+}
+
+.float-green {
+  @apply bg-green-500;
+}
+
+.float-blue {
+  @apply bg-blue-500;
+}
+
+/* stylelint-enable at-rule-no-unknown */
+
+/* ----------------------------------------
+
+   UNIVERSAL CARD (Premium Design)
+
+----------------------------------------- */
+
+/* stylelint-disable at-rule-no-unknown */
+.card {
+  @apply bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6 md:p-7 lg:p-8 shadow-xl;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), transparent);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+.card-dark {
+  @apply bg-slate-900/70 backdrop-blur-md border border-slate-700/60 rounded-2xl p-6 shadow-2xl;
+  transition: all 0.4s ease;
+}
+
+.card-hover {
+  @apply hover:border-indigo-500/50 hover:shadow-glow-sm duration-300;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  @apply bg-slate-800/70;
+}
+
+/* stylelint-enable at-rule-no-unknown */
+
+/* ----------------------------------------
+
+   BADGES / TAGS
+
+----------------------------------------- */
+
+/* stylelint-disable at-rule-no-unknown */
+.badge {
+  @apply px-4 py-1.5 rounded-lg text-sm bg-slate-800 border border-slate-600 text-slate-300;
+}
+
+.badge-tech {
+  @apply text-xs bg-slate-800 px-3 py-2 rounded;
+}
+
+/* stylelint-enable at-rule-no-unknown */
+
+/* ----------------------------------------
+
+   TIMELINE ITEMS (About Section)
+
+----------------------------------------- */
+
+/* stylelint-disable at-rule-no-unknown */
+.timeline-item {
+  @apply bg-slate-800 border border-slate-700 rounded-xl p-5 md:p-6 flex items-start gap-4;
+}
+
+.timeline-number {
+  @apply w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold flex items-center justify-center shadow-md;
+}
+
+.timeline-content {
+  @apply flex-1;
+}
+
+.timeline-title {
+  @apply font-semibold text-lg;
+}
+
+.timeline-company {
+  @apply text-indigo-400 font-medium;
+}
+
+.timeline-date {
+  @apply text-sm text-slate-400 mt-1;
+}
+
+.timeline-desc {
+  @apply text-slate-400 mt-3;
+}
+
+/* stylelint-enable at-rule-no-unknown */
+
+/* ----------------------------------------
+
+   SKILL PROGRESS BARS
+
+----------------------------------------- */
+
+/* stylelint-disable at-rule-no-unknown */
+.skill-bar {
+  @apply w-full bg-slate-700 h-2 rounded-full overflow-hidden mt-3;
+}
+
+.skill-progress {
+  @apply h-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500;
+}
+
+.skill-item {
+  @apply mb-6;
+}
+
+.skill-header {
+  @apply flex justify-between;
+}
+
+.skill-name {
+  @apply font-medium;
+}
+
+.skill-percent {
+  @apply text-sm text-slate-400;
+}
+
+/* stylelint-enable at-rule-no-unknown */
+
+/* ----------------------------------------
+
+   PROJECT MODULE / IMAGE CARD STYLING
+
+----------------------------------------- */
+
+/* stylelint-disable at-rule-no-unknown */
+.project-card {
+  @apply bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl overflow-hidden shadow-xl;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 500px;
+}
+
+.project-card:hover {
+  @apply border-indigo-500/50 shadow-glow-md;
+  transform: translateY(-8px);
+}
+
+.project-image {
+  @apply w-full object-cover;
+  height: 240px;
+  flex-shrink: 0;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.project-card:hover .project-image {
+  transform: scale(1.1);
+}
+
+.project-content {
+  @apply p-6 md:p-7;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.project-title {
+  @apply text-xl font-bold mb-2;
+  background: linear-gradient(135deg, #fff 0%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.project-desc {
+  @apply text-slate-400 mb-4 text-sm leading-relaxed;
+}
+
+.project-tags {
+  @apply flex flex-wrap gap-2 mb-4;
+}
+
+.project-tag {
+  @apply text-xs bg-slate-700/70 backdrop-blur-sm px-3 py-1.5 rounded-full border border-slate-600/50;
+  transition: all 0.3s ease;
+}
+
+.project-tag:hover {
+  @apply bg-indigo-500/20 border-indigo-500/50;
+}
+
+.project-links {
+  @apply flex gap-3;
+}
+
+.project-link {
+  @apply text-sm flex items-center gap-1 hover:text-indigo-400 duration-300;
+  transition: all 0.3s ease;
+}
+
+.project-link:hover {
+  transform: translateX(4px);
+}
+
+/* stylelint-enable at-rule-no-unknown */
+
+/* ----------------------------------------
+
+   MINI PROJECT CARDS
+
+----------------------------------------- */
+
+/* stylelint-disable at-rule-no-unknown */
+.mini-card {
+  @apply bg-slate-800 border border-slate-700 rounded-xl p-6 text-center shadow-md;
+}
+
+.mini-card:hover {
+  @apply border-indigo-500/50 shadow-indigo-500/10;
+}
+
+/* stylelint-enable at-rule-no-unknown */
+
+/* ----------------------------------------
+
+   EDUCATION ITEMS
+
+----------------------------------------- */
+
+/* stylelint-disable at-rule-no-unknown */
+.education-item {
+  @apply bg-slate-800 border border-slate-700 p-6 rounded-xl flex justify-between items-center shadow-lg;
+}
+
+.education-content {
+  @apply flex-1;
+}
+
+.education-title {
+  @apply font-bold text-lg;
+}
+
+.education-institute {
+  @apply text-indigo-400 font-medium;
+}
+
+.education-date {
+  @apply text-slate-400 mt-1;
+}
+
+/* stylelint-enable at-rule-no-unknown */
+
+/* ----------------------------------------
+
+   CONTACT FORMS
+
+----------------------------------------- */
+
+/* stylelint-disable at-rule-no-unknown */
+.input-field {
+  @apply w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-white outline-none focus:border-indigo-500 duration-150;
+}
+
+.textarea-field {
+  @apply w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-white outline-none focus:border-indigo-500 duration-150;
+}
+
+.contact-box {
+  @apply bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-lg;
+}
+
+.contact-info {
+  @apply bg-slate-900/40 p-4 rounded;
+}
+
+.contact-label {
+  @apply font-semibold;
+}
+
+.contact-value {
+  @apply text-slate-400;
+}
+
+/* stylelint-enable at-rule-no-unknown */
+
+/* ----------------------------------------
+
+   FOOTER
+
+----------------------------------------- */
+
+/* stylelint-disable at-rule-no-unknown */
+.footer-text {
+  @apply text-center text-sm opacity-60 py-10;
+}
+
+/* stylelint-enable at-rule-no-unknown */
+
+/* ----------------------------------------
+
+   CUSTOM SCROLLBAR (Exact UI look)
+
+----------------------------------------- */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f1629;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Body & Global Theme */
+html,
+body,
+#__next {
+  height: 100%;
+}
+
+/* stylelint-disable at-rule-no-unknown */
+body {
+  @apply bg-[#0f1724] text-slate-200;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Arial, sans-serif;
+}
+
+/* Accent Gradient Text */
+.gradient-accent {
+  background: linear-gradient(90deg, #6b8bff 0%, #b65cff 50%, #ff7da6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* stylelint-enable at-rule-no-unknown */
+
+/* ----------------------------------------
+
+   COMPONENT-SPECIFIC STYLING
+
+----------------------------------------- */
+
+/* Portfolio Home / Hero Section */
+.hero-name {
+  @apply text-4xl md:text-5xl font-extrabold leading-tight mb-3;
+}
+
+.hero-title {
+  @apply text-xl text-slate-300 font-medium mb-6;
+}
+
+.hero-description {
+  @apply text-slate-400 max-w-xl mb-8;
+}
+
+.hero-buttons {
+  @apply flex items-center gap-4;
+}
+
+.profile-container {
+  @apply relative w-64 h-64 md:w-72 md:h-72;
+}
+
+.profile-shadow {
+  @apply absolute inset-0 rounded-full shadow-soft-lg flex items-center justify-center;
+}
+
+.profile-bg {
+  @apply w-full h-full rounded-full bg-gradient-to-br from-slate-900/60 to-slate-800/40 flex items-center justify-center;
+}
+
+.profile-image {
+  @apply w-44 h-44 md:w-48 md:h-48 rounded-full object-cover border-4 border-slate-900;
+}
+
+.profile-icon {
+  @apply absolute -left-8 -top-8 w-14 h-14 rounded-full bg-slate-900/60 border border-slate-700 flex items-center justify-center text-slate-300;
+}
+
+/* About Section */
+.about-title {
+  @apply text-3xl font-bold mb-2;
+}
+
+.about-divider {
+  @apply h-1 w-24 bg-gradient-to-r from-indigo-400 to-pink-500 rounded mb-6;
+}
+
+.about-description {
+  @apply text-slate-400 mb-4;
+}
+
+.about-grid {
+  @apply grid sm:grid-cols-2 gap-3;
+}
+
+.about-info {
+  @apply bg-slate-900/40 p-3 rounded;
+}
+
+/* Skills Section */
+.skills-title {
+  @apply text-3xl font-bold mb-2;
+}
+
+.skills-grid {
+  @apply grid sm:grid-cols-2 lg:grid-cols-4 gap-6;
+}
+
+.skills-additional-title {
+  @apply text-slate-300 mb-3;
+}
+
+.skills-tech-list {
+  @apply flex flex-wrap gap-3;
+}
+
+/* Projects Section */
+.projects-title {
+  @apply text-3xl font-bold mb-2;
+}
+
+.projects-grid {
+  @apply grid md:grid-cols-2 gap-6;
+}
+
+/* Contact Section */
+.contact-title {
+  @apply text-3xl font-bold mb-2;
+}
+
+.contact-grid {
+  @apply grid md:grid-cols-2 gap-8;
+}
+
+.contact-form {
+  @apply bg-slate-900/30 p-6 rounded space-y-4;
+}
+
+.contact-submit {
+  @apply w-full px-4 py-3 rounded gradient-accent text-white font-semibold;
+}
+
+/* ----------------------------------------
+
+   ANIMATION ENHANCEMENTS
+
+----------------------------------------- */
+
+/* Floating animation for profile icon */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.profile-icon {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Glow effect for cards */
+.glow-card {
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+}
+
+/* Gradient border effect */
+.gradient-border {
+  position: relative;
+  border: none;
+  background: linear-gradient(90deg, #0a0f1d, #0f1629) padding-box,
+    linear-gradient(90deg, #6b8bff, #b65cff, #ff7da6) border-box;
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 0.75rem;
+}
+
+/* Pulse animation for buttons */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+  }
+}
+
+.pulse-button {
+  animation: pulse 2s infinite;
+}
+
+/* Text gradient animation */
+.animated-gradient {
+  background-size: 300% 300%;
+  animation: gradient 3s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
