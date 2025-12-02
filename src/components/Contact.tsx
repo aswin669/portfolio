@@ -26,33 +26,86 @@ export default function Contact() {
     setIsSubmitting(true);
 
     try {
-      // Create mailto link with form data
-      const subject = encodeURIComponent(`Portfolio Contact from ${formData.name}`);
-      const body = encodeURIComponent(
-        `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
-      );
-      const mailtoLink = `mailto:aswinseedharan689@gmail.com?subject=${subject}&body=${body}`;
+      // Validate form data
+      if (!formData.name || !formData.email || !formData.message) {
+        setPopupMessage("Please fill in all fields.");
+        setShowPopup(true);
+        setTimeout(() => setShowPopup(false), 3000);
+        setIsSubmitting(false);
+        return;
+      }
 
-      // Open default email client
-      window.location.href = mailtoLink;
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        setPopupMessage("Please enter a valid email address.");
+        setShowPopup(true);
+        setTimeout(() => setShowPopup(false), 3000);
+        setIsSubmitting(false);
+        return;
+      }
 
-      // Show success popup
-      setPopupMessage("Message sent successfully! ✓");
-      setShowPopup(true);
+      // Send message directly through API
+      let response;
+      try {
+        response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            message: formData.message,
+          }),
+        });
+      } catch (fetchError) {
+        console.error('Network error:', fetchError);
+        throw new Error(`Network error: ${fetchError.message}`);
+      }
 
-      // Reset form
-      setFormData({ name: "", email: "", message: "" });
+      if (response.ok) {
+        // Show success popup
+        setPopupMessage("Message sent successfully! ✓");
+        setShowPopup(true);
+
+        // Reset form
+        setFormData({ name: "", email: "", message: "" });
+      } else {
+        // Get error details from response
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Server error response:', errorData);
+        const errorMessage = errorData.details || errorData.error || 'Failed to send message';
+        throw new Error(errorMessage);
+      }
 
       // Hide popup after 3 seconds
       setTimeout(() => {
         setShowPopup(false);
       }, 3000);
     } catch (error) {
-      setPopupMessage("Failed to send message. Please try again.");
+      console.error('Contact form error:', error);
+      let errorMessage = "Failed to send message. Please try again.";
+      
+      // Check if it's a response object with error details
+      if (error instanceof Response) {
+        // Handle HTTP errors
+        errorMessage = `Failed to send message. Server responded with status ${error.status}.`;
+      } else if (error && typeof error === 'object') {
+        if ('details' in error) {
+          errorMessage = `Failed to send message: ${error.details}`;
+        } else if ('message' in error) {
+          errorMessage = `Failed to send message: ${error.message}`;
+        }
+      } else if (error && typeof error === 'string') {
+        errorMessage = `Failed to send message: ${error}`;
+      }
+      
+      setPopupMessage(errorMessage);
       setShowPopup(true);
       setTimeout(() => {
         setShowPopup(false);
-      }, 3000);
+      }, 5000); // Show error for longer
     } finally {
       setIsSubmitting(false);
     }
@@ -60,7 +113,7 @@ export default function Contact() {
 
   const contactInfo = [
     { label: "Phone", value: "+91 8157099669", link: "tel:+918157099669" },
-    { label: "Email", value: "aswinseedharan669@gmail.com", link: "mailto:aswinseedharan689@gmail.com" },
+    { label: "Email", value: "aswinsreedharan669@gmail.com", link: "mailto:aswinsreedharan669@gmail.com" },
     { label: "GitHub", value: "aswin669", link: "https://github.com/aswin669" },
     { label: "LinkedIn", value: "Aswinseedharan", link: "https://www.linkedin.com/in/aswinseedharan" }
   ];

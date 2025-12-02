@@ -73,7 +73,8 @@ export default function PortfolioHome() {
             Get In Touch
           </a>
           <a
-            href="#download"
+            href="/resume.pdf"
+            download="Aswin_MERN_Resume.pdf"
             className="btn-download flex items-center gap-2 w-full sm:w-auto justify-center"
           >
             <Download size={18} />

@@ -289,8 +289,6 @@ export default function Component() {
             <a
               href="/resume.pdf"
               download="Aswin_MERN_Resume.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
               className="group relative inline-flex items-center gap-2 px-8 py-3 text-sm font-medium transition-all duration-300 rounded-full bg-neutral-900 text-white dark:bg-white dark:text-black hover:opacity-90 hover:scale-105 shadow-lg hover:shadow-xl cursor-pointer"
             >
               <Download className="w-4 h-4 transition-transform duration-300 group-hover:-translate-y-1" />
