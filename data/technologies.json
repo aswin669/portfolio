@@ -1,0 +1,12 @@
+[
+  {"id":1,"name":"React JS","category":"Frontend","proficiency":95},
+  {"id":2,"name":"Next.js","category":"Frontend","proficiency":90},
+  {"id":3,"name":"Tailwind CSS","category":"Frontend","proficiency":90},
+  {"id":4,"name":"Node.js","category":"Backend","proficiency":90},
+  {"id":5,"name":"Express","category":"Backend","proficiency":85},
+  {"id":6,"name":"MongoDB","category":"Database","proficiency":85},
+  {"id":7,"name":"PostgreSQL","category":"Database","proficiency":75},
+  {"id":8,"name":"Prisma","category":"Database","proficiency":80},
+  {"id":9,"name":"Git","category":"Tools","proficiency":90},
+  {"id":10,"name":"Docker","category":"Tools","proficiency":70}
+]

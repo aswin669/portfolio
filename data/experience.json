@@ -1,0 +1,46 @@
+[
+  {
+    "id": 1,
+    "startDate": "SEP 2025",
+    "endDate": "PRESENT",
+    "title": "Backend Developer & Vibe Coder",
+    "company": "MCABEE DIGITAL",
+    "highlights": [
+      "Developing and maintaining scalable backend applications using Node.js, Fastify, TypeScript, Prisma, and PostgreSQL.",
+      "Designed and developed RESTful APIs for authentication, user management, appointments, bookings, payments, messaging, notifications, and administrative workflows.",
+      "Implemented secure authentication and authorization systems using JWT, role-based access control (RBAC), and protected API routes for different user roles.",
+      "Worked with Prisma ORM and PostgreSQL for database design, relationship management, query optimization, and reliable data handling.",
+      "Developed modular and maintainable backend architectures with proper separation of routes, controllers, services, repositories, DTOs, validations, and database layers.",
+      "Integrated third-party services and APIs including Firebase, Cloudinary, SMTP/email services, and payment-related workflows.",
+      "Built and tested APIs using Swagger/OpenAPI and API testing tools to ensure reliability and consistency.",
+      "Used AI-assisted development and vibe coding techniques to accelerate development, generate solutions, debug issues, and rapidly prototype new features.",
+      "Collaborated on full-stack projects by understanding frontend requirements and building backend APIs that seamlessly integrate with React.js applications.",
+      "Worked with Git and GitHub for version control, collaborative development, branching, and code management.",
+      "Troubleshot production and development issues, optimized API performance, and continuously improved application architecture."
+    ]
+  },
+  {
+    "id": 2,
+    "startDate": "JUL 2024",
+    "endDate": "JAN 2025",
+    "title": "MERN Intern",
+    "company": "PLUGINS LEARN LTD",
+    "highlights": [
+      "Gained hands-on experience in frontend and backend development, as well as database management.",
+      "Developed projects using JavaScript, ReactJS, NodeJS and MongoDB.",
+      "Worked on full-stack web applications following industry best practices."
+    ]
+  },
+  {
+    "id": 3,
+    "startDate": "DEC 2022",
+    "endDate": "AUG 2025",
+    "title": "Junior Freelance Developer",
+    "company": "SELF-EMPLOYED",
+    "highlights": [
+      "Developed custom full-stack web solutions using MERN stack (MongoDB, Express.js, React, Node.js) for diverse clients.",
+      "Built responsive, user-friendly interfaces with modern JavaScript, TypeScript, and Tailwind CSS, ensuring cross-browser compatibility.",
+      "Managed version control and project collaboration using Git and GitHub, ensuring efficient code management."
+    ]
+  }
+]

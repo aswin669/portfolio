@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "quote": "The level of technical rigor and architectural foresight delivered was beyond expectations. They didn't just write code; they engineered a foundation that scaled our processing power by 400% without increasing overhead.",
+    "name": "Marcus Thorne",
+    "role": "Chief Technology Officer",
+    "company": "NEXUS SYSTEMS",
+    "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuAuxFPewlJr1vojOdxoKFT1Dd05ku8wihLnTjkgzOHSlZ5Jj9XDJTPX2WrqNWUxTN6xTcMX1dbC3NddnBe9CGgfwsfthkcExIwNnvlOcEJDk4zFy6xVIxZBVNlCNeR3RkePzpJy_dvKIyajI3EqSgEnmHGSP_UGbthqlxUw0OWsAjOCHmqTpdmMK9T9KxSa5FSAwtnYvzw-eH5A58rqOMJizuZJEplKf5LLcmFFG3qsR7JChyF3twfB"
+  },
+  {
+    "id": 2,
+    "quote": "Precision in execution and absolute clarity in communication. The restructuring of our legacy database was handled with surgical accuracy.",
+    "name": "Elena Vance",
+    "role": "Lead Developer",
+    "company": "ARCH RESEARCH",
+    "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuDsYjk4oFzKI23ykP7Nk-ZQeUkeeMOqWNbAif_KTtitrI5N5f23RlTdnO5HAvoZl8b1Rdu2sfiIYRBub7wRXG-h1j9x7kh_pRE8JpPhWN6EysfGEvdWZaCYYX7dMoCmd4ZEAy_HcD7ja1MnWQHNayvKoC2QrCBM75jhUtK8tcZB2AHW9xscjuZ5OD3mkR0SRfKUyliLpi7dNBhZC_jiWHLoBGX7CLY85VZANyimGHYbT4u4MOb5KJiS"
+  },
+  {
+    "id": 3,
+    "quote": "An exceptional eye for performance bottlenecks. The optimization strategies implemented saved us thousands in monthly cloud costs.",
+    "name": "Julian Koster",
+    "role": "Founder",
+    "company": "SPECTRA FLOW",
+    "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuAu7JBVfZ73mbB2RxjwCSKS5OVuDvk9mBZja-yfJ-AQMbJeDLE1k36aaOqaUVIHBBJsX95uSRjQBzjK0tCJy2haCPNmEzjldzYoHf7RzACqUoq_rYJRQ0h5a001sroozeah7hUDTzwQb1R6N3oAzp9IiDdET3eFVK4wNZuAi8bst4YedE21cas_JX0HReXTV59zg36DTLu-I0ED-JNVM6sSNOMmEnoC9Z50b8RVD4ewrEcmMdncwEp7"
+  },
+  {
+    "id": 4,
+    "quote": "The integration of complex microservices was seamless. Their ability to translate abstract business requirements into robust technical architecture is rare in the industry today.",
+    "name": "Sarah Jenkins",
+    "role": "VP Engineering",
+    "company": "CLOUD OAK",
+    "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuALZZ7oxv0NkU6ODCi7BYm4N84HXEahZjpzmFJ7s71xhMF7PVx79QAu_E8YWPV_TUKF3f0TD6m3NeqXhL9Q44QDqCG_LlwQIwqJrAiaMVwrq-qEXDhbt3h6-kjyOeDFdK856-zFrxoMBbCa-4fQqPC3OynW7UcxLOa0N9unA27zwynLoxlL-k4R3j0c-C13_YUrl9NpqFzplodknJJ9VC6aCnsUEjQ_HULf8bufioXWk3VdePKVvYVv"
+  }
+]
