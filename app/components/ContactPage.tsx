@@ -100,8 +100,8 @@ export default function ContactPage() {
               </div>
               {validation && <p className="font-mono-label text-mono-label text-error">{validation}</p>}
               <div className="pt-stack-lg">
-                <button className="w-full md:w-auto bg-primary text-on-primary px-12 py-5 font-label-caps text-label-caps uppercase hover:opacity-85 transition-all duration-300 disabled:opacity-50" type="submit" disabled={submitting}>
-                  {done ? 'Sent!' : submitting ? 'Sending...' : 'Submit Message'}
+                <button className={`w-full md:w-auto px-12 py-5 font-label-caps text-label-caps uppercase transition-all duration-300 disabled:opacity-50 ${done ? 'bg-green-600 text-white' : 'bg-primary text-on-primary hover:opacity-85'}`} type="submit" disabled={submitting}>
+                  {done ? '✓ Message Sent Successfully!' : submitting ? 'Sending...' : 'Submit Message'}
                 </button>
               </div>
             </form>

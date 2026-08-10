@@ -10,9 +10,17 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const message = await createContact(body);
-  await sendContactNotification(body);
-  createLog({ type: 'user', action: 'contact_submitted', severity: 'info', message: `Contact form submitted by ${body.name}`, email: body.email, details: { subject: body.subject } }).catch(() => {});
-  return NextResponse.json(message, { status: 201 });
+  try {
+    const body = await req.json();
+    const contact = await createContact(body);
+
+    // Send email asynchronously in background so response returns instantly
+    sendContactNotification(body).catch((e) => console.error('Background email notification error:', e));
+    createLog({ type: 'user', action: 'contact_submitted', severity: 'info', message: `Contact form submitted by ${body.name}`, email: body.email, details: { subject: body.subject } }).catch(() => {});
+
+    return NextResponse.json({ success: true, contact }, { status: 201 });
+  } catch (err: any) {
+    console.error('Contact form submission error:', err);
+    return NextResponse.json({ error: 'Failed to save contact message' }, { status: 500 });
+  }
 }
