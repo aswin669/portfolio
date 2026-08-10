@@ -67,13 +67,26 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter border-t border-primary pt-stack-lg">
           <section className="md:col-span-7 pr-0 md:pr-gutter">
             {done && (
-              <div className="mb-8 p-4 border border-green-500/50 bg-green-950/40 text-green-300 font-mono-label text-sm flex items-center justify-between rounded-sm shadow-md">
-                <div className="flex items-center gap-3">
-                  <span className="material-symbols-outlined text-green-400">check_circle</span>
-                  <span>Message sent successfully! I will reply to your email shortly.</span>
+              <div className="mb-stack-lg border border-primary bg-surface p-5 font-mono-label text-sm text-primary flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-l-4 border-l-primary shadow-sm">
+                <div className="flex items-start sm:items-center gap-3.5">
+                  <span className="px-2 py-0.5 bg-primary text-on-primary font-label-caps text-[10px] font-bold tracking-widest uppercase shrink-0">
+                    STATUS // 201 OK
+                  </span>
+                  <div>
+                    <p className="font-label-caps text-xs uppercase tracking-wider font-bold text-primary">
+                      MESSAGE TRANSMITTED SUCCESSFULLY
+                    </p>
+                    <p className="text-secondary text-xs mt-0.5">
+                      Thank you for reaching out. Your message has been sent to Aswin. Expect a response shortly.
+                    </p>
+                  </div>
                 </div>
-                <button onClick={() => setDone(false)} className="text-green-400 hover:text-green-200 text-lg leading-none">
-                  &times;
+                <button
+                  type="button"
+                  onClick={() => setDone(false)}
+                  className="font-mono-label text-[11px] uppercase tracking-wider text-secondary hover:text-primary border border-outline-variant px-3 py-1.5 transition-colors shrink-0"
+                >
+                  DISMISS
                 </button>
               </div>
             )}
