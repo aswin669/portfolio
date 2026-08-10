@@ -212,13 +212,24 @@ async function seedIfEmpty() {
   }
 }
 
-export const initPromise = initTables().then(() => seedIfEmpty()).catch((err) => {
-  console.error('DB init error:', err);
-});
+let initPromise: Promise<void> | null = null;
 
-initPromise.then(async () => {
-  try { await query(`INSERT INTO logs (type, action, severity, message) VALUES ('server', 'server_start', 'info', 'Database initialized and seeded')`); } catch {}
-});
+export async function ensureInitialized() {
+  if (!process.env.DATABASE_URL) return;
+  if (!initPromise) {
+    initPromise = (async () => {
+      try {
+        await initTables();
+        await seedIfEmpty();
+        await query(`INSERT INTO logs (type, action, severity, message) VALUES ('server', 'server_start', 'info', 'Database initialized and seeded')`);
+      } catch (err) {
+        console.error('DB init error:', err);
+        initPromise = null;
+      }
+    })();
+  }
+  return initPromise;
+}
 
 function toCamelCase(row: any): any {
   if (!row) return row;
@@ -236,12 +247,12 @@ function toCamelArray(rows: any[]): any[] {
 
 // Projects
 export async function getAllProjects() {
-  await initPromise;
+  await ensureInitialized();
   return toCamelArray(await query('SELECT * FROM projects ORDER BY created_at DESC'));
 }
 
 export async function getProject(idOrSlug: string | number) {
-  await initPromise;
+  await ensureInitialized();
   const isNum = typeof idOrSlug === 'number' || !isNaN(Number(idOrSlug));
   const rows = await query(
     `SELECT * FROM projects WHERE ${isNum ? 'id = $1' : 'slug = $1'}`,
@@ -251,7 +262,7 @@ export async function getProject(idOrSlug: string | number) {
 }
 
 export async function createProject(data: any) {
-  await initPromise;
+  await ensureInitialized();
   const { slug, title, name, description, tagline, content, problem, solution, category, stack, tech, status, image, featured, noIndex, canonical, metaTitle, metaDesc, year, type: ptype, caseNo, liveUrl, architecture, features, journey, gallery, architectureFlow } = data;
   const rows = await query(
     `INSERT INTO projects (slug, title, name, description, tagline, content, problem, solution, category, stack, tech, status, image, featured, no_index, canonical, meta_title, meta_desc, year, type, case_no, live_url, architecture, features, journey, gallery, architecture_flow)
@@ -262,7 +273,7 @@ export async function createProject(data: any) {
 }
 
 export async function updateProject(id: number, data: any) {
-  await initPromise;
+  await ensureInitialized();
   const fields: string[] = [];
   const values: any[] = [];
   let idx = 1;
@@ -282,19 +293,19 @@ export async function updateProject(id: number, data: any) {
 }
 
 export async function deleteProject(id: number) {
-  await initPromise;
+  await ensureInitialized();
   const rows = await query('DELETE FROM projects WHERE id = $1 RETURNING id', [id]);
   return rows.length > 0;
 }
 
 // Blog
 export async function getAllBlogPosts() {
-  await initPromise;
+  await ensureInitialized();
   return toCamelArray(await query('SELECT * FROM blog_posts ORDER BY created_at DESC'));
 }
 
 export async function getBlogPost(idOrSlug: string | number) {
-  await initPromise;
+  await ensureInitialized();
   const isNum = typeof idOrSlug === 'number' || !isNaN(Number(idOrSlug));
   const rows = await query(
     `SELECT * FROM blog_posts WHERE ${isNum ? 'id = $1' : 'slug = $1'}`,
@@ -304,7 +315,7 @@ export async function getBlogPost(idOrSlug: string | number) {
 }
 
 export async function createBlogPost(data: any) {
-  await initPromise;
+  await ensureInitialized();
   const { title, slug, excerpt, content, author, tags, published, image, category, metaTitle, metaDesc } = data;
   const rows = await query(
     `INSERT INTO blog_posts (title, slug, excerpt, content, author, tags, published, image, category, meta_title, meta_desc)
@@ -315,7 +326,7 @@ export async function createBlogPost(data: any) {
 }
 
 export async function updateBlogPost(id: number, data: any) {
-  await initPromise;
+  await ensureInitialized();
   const fields: string[] = [];
   const values: any[] = [];
   let idx = 1;
@@ -340,19 +351,19 @@ export async function updateBlogPost(id: number, data: any) {
 }
 
 export async function deleteBlogPost(id: number) {
-  await initPromise;
+  await ensureInitialized();
   const rows = await query('DELETE FROM blog_posts WHERE id = $1 RETURNING id', [id]);
   return rows.length > 0;
 }
 
 // Categories
 export async function getAllCategories() {
-  await initPromise;
+  await ensureInitialized();
   return toCamelArray(await query('SELECT * FROM categories ORDER BY name'));
 }
 
 export async function createCategory(data: any) {
-  await initPromise;
+  await ensureInitialized();
   const rows = await query(
     'INSERT INTO categories (name, slug, count) VALUES ($1,$2,$3) RETURNING *',
     [data.name||'', data.slug||'', data.count||0]
@@ -361,19 +372,19 @@ export async function createCategory(data: any) {
 }
 
 export async function deleteCategory(id: number) {
-  await initPromise;
+  await ensureInitialized();
   const rows = await query('DELETE FROM categories WHERE id = $1 RETURNING id', [id]);
   return rows.length > 0;
 }
 
 // Technologies
 export async function getAllTechnologies() {
-  await initPromise;
+  await ensureInitialized();
   return toCamelArray(await query('SELECT * FROM technologies ORDER BY name'));
 }
 
 export async function createTechnology(data: any) {
-  await initPromise;
+  await ensureInitialized();
   const rows = await query(
     'INSERT INTO technologies (name, slug) VALUES ($1,$2) RETURNING *',
     [data.name||'', data.slug||'']
@@ -382,25 +393,25 @@ export async function createTechnology(data: any) {
 }
 
 export async function deleteTechnology(id: number) {
-  await initPromise;
+  await ensureInitialized();
   const rows = await query('DELETE FROM technologies WHERE id = $1 RETURNING id', [id]);
   return rows.length > 0;
 }
 
 // Media
 export async function getAllMedia() {
-  await initPromise;
+  await ensureInitialized();
   return toCamelArray(await query('SELECT * FROM media ORDER BY uploaded_at DESC'));
 }
 
 export async function getMediaItem(id: number) {
-  await initPromise;
+  await ensureInitialized();
   const rows = await query('SELECT * FROM media WHERE id = $1', [id]);
   return rows.length ? toCamelCase(rows[0]) : null;
 }
 
 export async function createMediaItem(data: any) {
-  await initPromise;
+  await ensureInitialized();
   const rows = await query(
     'INSERT INTO media (name, url, type, size) VALUES ($1,$2,$3,$4) RETURNING *',
     [data.name||'', data.url||'', data.type||'image/jpeg', data.size||0]
@@ -409,7 +420,7 @@ export async function createMediaItem(data: any) {
 }
 
 export async function updateMediaItem(id: number, data: any) {
-  await initPromise;
+  await ensureInitialized();
   const fields: string[] = [];
   const values: any[] = [];
   let idx = 1;
@@ -428,19 +439,19 @@ export async function updateMediaItem(id: number, data: any) {
 }
 
 export async function deleteMediaItem(id: number) {
-  await initPromise;
+  await ensureInitialized();
   const rows = await query('DELETE FROM media WHERE id = $1 RETURNING id', [id]);
   return rows.length > 0;
 }
 
 // Contacts
 export async function getAllContacts() {
-  await initPromise;
+  await ensureInitialized();
   return toCamelArray(await query('SELECT * FROM contacts ORDER BY created_at DESC'));
 }
 
 export async function createContact(data: any) {
-  await initPromise;
+  await ensureInitialized();
   const rows = await query(
     'INSERT INTO contacts (name, email, subject, message, read) VALUES ($1,$2,$3,$4,$5) RETURNING *',
     [data.name||'', data.email||'', data.subject||'', data.message||'', data.read||false]
@@ -449,19 +460,19 @@ export async function createContact(data: any) {
 }
 
 export async function deleteContact(id: number) {
-  await initPromise;
+  await ensureInitialized();
   const rows = await query('DELETE FROM contacts WHERE id=$1 RETURNING id', [id]);
   return rows.length > 0;
 }
 
 // Testimonials
 export async function getAllTestimonials() {
-  await initPromise;
+  await ensureInitialized();
   return toCamelArray(await query('SELECT * FROM testimonials ORDER BY created_at DESC'));
 }
 
 export async function createTestimonial(data: any) {
-  await initPromise;
+  await ensureInitialized();
   const rows = await query(
     'INSERT INTO testimonials (name, role, content, quote, company, image, rating) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
     [data.name||'', data.role||'', data.content||'', data.quote||'', data.company||'', data.image||'', data.rating||5]
@@ -470,7 +481,7 @@ export async function createTestimonial(data: any) {
 }
 
 export async function updateTestimonial(id: number, data: any) {
-  await initPromise;
+  await ensureInitialized();
   const fields: string[] = [];
   const values: any[] = [];
   let idx = 1;
@@ -489,19 +500,19 @@ export async function updateTestimonial(id: number, data: any) {
 }
 
 export async function deleteTestimonial(id: number) {
-  await initPromise;
+  await ensureInitialized();
   const rows = await query('DELETE FROM testimonials WHERE id = $1 RETURNING id', [id]);
   return rows.length > 0;
 }
 
 // Experience
 export async function getAllExperience() {
-  await initPromise;
+  await ensureInitialized();
   return toCamelArray(await query('SELECT * FROM experience ORDER BY created_at DESC'));
 }
 
 export async function createExperience(data: any) {
-  await initPromise;
+  await ensureInitialized();
   const rows = await query(
     'INSERT INTO experience (title, company, start_date, end_date, highlights) VALUES ($1,$2,$3,$4,$5) RETURNING *',
     [data.title||'', data.company||'', data.startDate||'', data.endDate||'', data.highlights||[]]
@@ -510,7 +521,7 @@ export async function createExperience(data: any) {
 }
 
 export async function updateExperience(id: number, data: any) {
-  await initPromise;
+  await ensureInitialized();
   const rows = await query(
     'UPDATE experience SET title=$1, company=$2, start_date=$3, end_date=$4, highlights=$5 WHERE id=$6 RETURNING *',
     [data.title||'', data.company||'', data.startDate||'', data.endDate||'', data.highlights||[], id]
@@ -519,19 +530,19 @@ export async function updateExperience(id: number, data: any) {
 }
 
 export async function deleteExperience(id: number) {
-  await initPromise;
+  await ensureInitialized();
   const rows = await query('DELETE FROM experience WHERE id=$1 RETURNING id', [id]);
   return rows.length > 0;
 }
 
 // Analytics
 export async function recordVisit(path: string) {
-  await initPromise;
+  await ensureInitialized();
   await query('INSERT INTO analytics (path) VALUES ($1)', [path]);
 }
 
 export async function getAnalytics(days: number) {
-  await initPromise;
+  await ensureInitialized();
   const daily = await query(
     `SELECT DATE(timestamp) as date, COUNT(*) as count
      FROM analytics
@@ -586,7 +597,7 @@ export async function getAnalytics(days: number) {
 
 // Settings
 export async function getAllSettings() {
-  await initPromise;
+  await ensureInitialized();
   const rows = await query('SELECT key, value FROM settings');
   const result: Record<string, string> = {};
   for (const r of rows) result[r.key] = r.value;
@@ -594,7 +605,7 @@ export async function getAllSettings() {
 }
 
 export async function upsertSetting(key: string, value: string) {
-  await initPromise;
+  await ensureInitialized();
   await query(
     'INSERT INTO settings (key, value) VALUES ($1, $2) ON CONFLICT (key) DO UPDATE SET value = $2',
     [key, value]

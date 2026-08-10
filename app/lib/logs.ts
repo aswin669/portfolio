@@ -1,4 +1,4 @@
-import { query, initPromise } from './db';
+import { query, ensureInitialized } from './db';
 
 export async function createLog(data: {
   type: string;
@@ -16,7 +16,7 @@ export async function createLog(data: {
   requestId?: string;
 }) {
   try {
-    await initPromise;
+    await ensureInitialized();
     await query(
       `INSERT INTO logs (type, action, severity, message, details, user_info, email, ip_address, endpoint, method, status_code, response_time, request_id)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
@@ -50,7 +50,7 @@ export async function getLogs(opts: {
   page?: number;
   limit?: number;
 }) {
-  await initPromise;
+  await ensureInitialized();
   const conditions: string[] = [];
   const params: any[] = [];
   let idx = 1;
@@ -115,7 +115,7 @@ export async function getLogs(opts: {
 }
 
 export async function getLogSummary() {
-  await initPromise;
+  await ensureInitialized();
   const today = new Date().toISOString().slice(0, 10);
 
   const [totalRes, errorsTodayRes, warningsRes, failedRes, apiRes, dbErrorsRes, securityRes] = await Promise.all([
