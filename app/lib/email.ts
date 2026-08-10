@@ -1,31 +1,37 @@
 import nodemailer from 'nodemailer';
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT) || 587,
-  secure: process.env.SMTP_SECURE === 'true',
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
-
 export async function sendContactNotification(data: {
   name: string;
   email: string;
   subject: string;
   message: string;
 }) {
-  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    console.log('SMTP credentials not configured. Contact saved to database.');
+  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
+  const port = Number(process.env.SMTP_PORT) || 587;
+  const secure = process.env.SMTP_SECURE === 'true';
+  const user = process.env.SMTP_USER || 'aswinashes669@gmail.com';
+  const pass = process.env.SMTP_PASS || 'sropyxtvzvaykykt';
+  const from = process.env.SMTP_FROM || user;
+  const to = process.env.ADMIN_EMAIL || 'Aswinsreedharan669@gmail.com';
+
+  if (!user || !pass) {
+    console.log('SMTP credentials missing, contact saved to database only.');
     return;
   }
+
   try {
+    const transporter = nodemailer.createTransport({
+      host,
+      port,
+      secure,
+      auth: { user, pass },
+    });
+
     await transporter.sendMail({
-      from: process.env.SMTP_FROM || process.env.SMTP_USER,
-      to: process.env.ADMIN_EMAIL || 'Aswinsreedharan669@gmail.com',
+      from: `"${data.name} via Portfolio" <${from}>`,
+      to,
       replyTo: data.email,
-      subject: `[PORTFOLIO] ${data.subject}`,
+      subject: `[PORTFOLIO CONTACT] ${data.subject || 'New Message'}`,
       html: `
         <table style="width:100%;max-width:600px;margin:0 auto;font-family:'Courier New',Courier,monospace;background:#fff;color:#000">
           <tr>
@@ -82,6 +88,7 @@ export async function sendContactNotification(data: {
         </table>
       `,
     });
+    console.log(`Email notification sent successfully to ${to}`);
   } catch (err) {
     console.error('Failed to send contact notification email:', err);
   }
