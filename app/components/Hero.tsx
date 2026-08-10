@@ -134,12 +134,12 @@ export default function Hero() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
             
             {/* Bottom floating badge on image */}
-            <div className="absolute bottom-4 left-4 right-4 bg-slate-900/90 dark:bg-black/85 backdrop-blur-md p-3.5 border border-white/20 rounded-xl flex items-center justify-between gap-3 shadow-xl">
-              <div className="min-w-0 flex-1">
-                <span className="font-display-lg text-sm font-bold text-white block truncate">ASWIN S</span>
-                <span className="font-mono-label text-xs uppercase tracking-wider text-emerald-400 font-semibold block truncate">Full-Stack Developer</span>
+            <div className="absolute bottom-4 left-4 right-4 bg-surface/90 backdrop-blur-md p-3.5 border border-primary/20 rounded-xl flex items-center justify-between">
+              <div>
+                <span className="font-display-lg text-sm font-bold text-primary block">ASWIN S</span>
+                <span className="font-mono-label text-[10px] uppercase tracking-wider text-primary font-medium">Full-Stack Developer</span>
               </div>
-              <span className="font-mono-label text-[10px] px-2.5 py-1 bg-emerald-500 text-slate-950 rounded uppercase font-bold shrink-0">
+              <span className="font-mono-label text-[10px] px-2.5 py-1 bg-primary text-on-primary rounded uppercase font-semibold">
                 Kerala, IN
               </span>
             </div>
