@@ -25,7 +25,7 @@ export default function Hero() {
 
           {/* Main Headline */}
           <h1 className="font-display-lg text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-bold tracking-tight text-primary leading-tight mb-4">
-            MERN Stack Developer Building Scalable Web Experiences
+            Full Stack Developer Building Scalable Web Experiences
           </h1>
 
           {/* Subtitle Description */}
@@ -127,7 +127,7 @@ export default function Hero() {
           <div className="w-full max-w-md aspect-square md:aspect-[4/5] relative overflow-hidden rounded-2xl border border-outline-variant shadow-2xl group">
             <img
               className="w-full h-full object-cover grayscale transition-transform duration-700 group-hover:scale-105"
-              alt="ASWIN S - MERN Stack Developer"
+              alt="ASWIN S - Full Stack Developer"
               src={heroImage}
             />
             {/* Dark overlay gradient */}
@@ -137,7 +137,7 @@ export default function Hero() {
             <div className="absolute bottom-4 left-4 right-4 bg-surface/90 backdrop-blur-md p-3.5 border border-primary/20 rounded-xl flex items-center justify-between">
               <div>
                 <span className="font-display-lg text-sm font-bold text-primary block">ASWIN S</span>
-                <span className="font-mono-label text-[10px] uppercase tracking-wider text-secondary">Full-Stack Engineer</span>
+                <span className="font-mono-label text-[10px] uppercase tracking-wider text-secondary">Full-Stack Developer</span>
               </div>
               <span className="font-mono-label text-[10px] px-2.5 py-1 bg-primary text-on-primary rounded uppercase font-semibold">
                 Kerala, IN
