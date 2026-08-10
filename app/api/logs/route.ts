@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getLogs, getLogSummary, createLog } from '@/lib/logs';
 

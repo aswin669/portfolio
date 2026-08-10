@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { deleteTestimonial, updateTestimonial } from '@/lib/db';
 import { createLog } from '@/lib/logs';

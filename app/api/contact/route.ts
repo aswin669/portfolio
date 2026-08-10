@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { getAllContacts, createContact } from '@/lib/db';
 import { sendContactNotification } from '@/lib/email';

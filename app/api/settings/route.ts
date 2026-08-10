@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllSettings, upsertSetting } from '@/lib/db';
 import { createLog } from '@/lib/logs';

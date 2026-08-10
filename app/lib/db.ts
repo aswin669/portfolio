@@ -6,6 +6,9 @@ const needsSSL = connStr.includes('sslmode=require') || (connStr.includes('rende
 const pool = new Pool({
   connectionString: connStr || undefined,
   ssl: needsSSL ? { rejectUnauthorized: false } : false,
+  max: 10,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 5000,
 });
 
 export async function query(sql: string, params?: any[]) {
