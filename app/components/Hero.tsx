@@ -1,4 +1,10 @@
+'use client';
+
+import { useSettings } from '@/lib/useSettings';
+
 export default function Hero() {
+  const settings = useSettings();
+  const heroImage = settings.hero_image || '/hero-image.jpg';
   const techStack = ['React', 'Next.js', 'Node.js', 'MongoDB', 'TypeScript', 'Tailwind CSS'];
 
   return (
@@ -122,7 +128,7 @@ export default function Hero() {
             <img
               className="w-full h-full object-cover grayscale transition-transform duration-700 group-hover:scale-105"
               alt="ASWIN S - MERN Stack Developer"
-              src="/hero-image.jpg"
+              src={heroImage}
             />
             {/* Dark overlay gradient */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>

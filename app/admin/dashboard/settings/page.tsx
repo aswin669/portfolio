@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 const SETTINGS_SECTIONS: { title: string; keys: { key: string; label: string; type?: string; placeholder?: string }[] }[] = [
   {
@@ -39,8 +39,10 @@ export default function AdminSettings() {
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetch('/api/settings')
@@ -52,6 +54,27 @@ export default function AdminSettings() {
   function handleChange(key: string, value: string) {
     setSettings((prev) => ({ ...prev, [key]: value }));
   }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/upload', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (data.url) {
+        setSettings((prev) => ({ ...prev, hero_image: data.url }));
+        setMessage('Hero image uploaded successfully! Click SAVE ALL to preserve changes.');
+      }
+    } catch {
+      setError('Image upload failed');
+    } finally {
+      setUploading(false);
+      if (e.target) e.target.value = '';
+    }
+  };
 
   async function handleSave() {
     setSaving(true);
@@ -109,6 +132,70 @@ export default function AdminSettings() {
       )}
 
       <div className="space-y-stack-lg">
+        {/* Hero Image Settings Section */}
+        <div className="border border-on-background">
+          <div className="border-b border-on-background bg-surface-container px-6 py-4 flex justify-between items-center">
+            <h3 className="font-label-caps text-label-caps uppercase tracking-wider">Hero Section Image</h3>
+            <span className="font-mono-label text-[11px] text-secondary">HOMEPAGE PORTRAIT PHOTO</span>
+          </div>
+          <div className="p-6 space-y-4">
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+              <div className="w-32 h-40 bg-surface-container border border-on-background overflow-hidden relative group rounded-md shrink-0">
+                <img
+                  src={settings.hero_image || '/hero-image.jpg'}
+                  alt="Hero Preview"
+                  className="w-full h-full object-cover"
+                />
+                {settings.hero_image && (
+                  <button
+                    type="button"
+                    onClick={() => handleChange('hero_image', '')}
+                    className="absolute top-1 right-1 bg-black/80 text-white w-6 h-6 flex items-center justify-center text-xs rounded hover:bg-red-600 transition-colors"
+                    title="Reset to default"
+                  >
+                    &times;
+                  </button>
+                )}
+              </div>
+              <div className="space-y-3 flex-1 w-full">
+                <label className="font-mono-label text-[12px] text-secondary uppercase tracking-wider block">
+                  Hero Image URL
+                </label>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <input
+                    type="text"
+                    value={settings.hero_image || ''}
+                    onChange={(e) => handleChange('hero_image', e.target.value)}
+                    placeholder="https://... or upload image"
+                    className="flex-1 bg-background border border-on-background px-4 py-2.5 font-mono-label text-sm focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                    className="bg-primary text-on-primary font-label-caps text-xs px-5 py-3 hover:opacity-90 transition-opacity flex items-center justify-center gap-2 whitespace-nowrap disabled:opacity-50"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">
+                      {uploading ? 'hourglass_top' : 'upload'}
+                    </span>
+                    {uploading ? 'UPLOADING...' : 'UPLOAD NEW PHOTO'}
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageUpload}
+                  />
+                </div>
+                <p className="font-mono-label text-xs text-secondary">
+                  Upload a portrait photo or enter an image URL to customize your homepage Hero image.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {SETTINGS_SECTIONS.map((section) => (
           <div key={section.title} className="border border-on-background">
             <div className="border-b border-on-background bg-surface-container px-6 py-4">
