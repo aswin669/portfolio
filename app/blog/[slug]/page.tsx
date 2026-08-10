@@ -48,13 +48,15 @@ export default function BlogPost() {
       <main className="pt-32 max-w-3xl mx-auto px-gutter mb-section-gap">
         <header className="mb-stack-lg">
           <div className="flex items-center gap-3 mb-stack-sm">
-            <span className="font-mono-label text-mono-label text-secondary">{post.createdAt}</span>
+            <span className="font-mono-label text-mono-label text-secondary">
+              {post.createdAt ? (isNaN(new Date(post.createdAt).getTime()) ? post.createdAt : new Date(post.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })) : ''}
+            </span>
             {(post.tags || []).map((t: string) => (
               <span key={t} className="font-mono-label text-[10px] border border-primary px-2 py-0.5 uppercase">{t}</span>
             ))}
           </div>
-          <h1 className="font-display-lg text-display-lg-mobile md:text-display-lg uppercase mb-stack-md">{post.title}</h1>
-          <p className="font-body-lg text-body-lg text-secondary">{post.excerpt}</p>
+          <h1 className="font-display-lg text-display-lg-mobile md:text-display-lg uppercase mb-stack-md text-primary">{post.title}</h1>
+          {post.excerpt && <p className="font-body-lg text-body-lg text-secondary leading-relaxed mb-stack-md">{post.excerpt}</p>}
         </header>
 
         {post.image && (
@@ -64,7 +66,7 @@ export default function BlogPost() {
         )}
 
         <article
-          className="font-body-lg text-body-lg leading-relaxed prose prose-invert max-w-none"
+          className="font-body-lg text-body-lg leading-relaxed prose dark:prose-invert prose-headings:text-primary prose-p:text-on-surface prose-strong:text-primary prose-a:text-primary max-w-none text-on-surface"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
 
