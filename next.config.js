@@ -15,17 +15,14 @@ const nextConfig = {
     return config;
   },
   async rewrites() {
-    const backendUrl = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL;
-    if (backendUrl) {
-      const target = backendUrl.replace(/\/$/, '');
-      return [
-        {
-          source: '/api/:path*',
-          destination: `${target}/api/:path*`,
-        },
-      ];
-    }
-    return [];
+    const backendUrl = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'https://portfolio-backend-rnt1.onrender.com';
+    const target = backendUrl.replace(/\/$/, '');
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${target}/api/:path*`,
+      },
+    ];
   },
 };
 

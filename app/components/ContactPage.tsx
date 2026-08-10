@@ -19,15 +19,27 @@ export default function ContactPage() {
     const form = e.currentTarget as HTMLFormElement;
     const name = (form.elements.namedItem('name') as HTMLInputElement).value.trim();
     const emailField = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
+    const subject = (form.elements.namedItem('subject') as HTMLInputElement).value.trim();
     const message = (form.elements.namedItem('message') as HTMLTextAreaElement).value.trim();
     if (!name || !emailField || !message) { setValidation('Please fill in all required fields.'); return; }
     if (!emailField.includes('@')) { setValidation('Please enter a valid email.'); return; }
     setValidation('');
     setSubmitting(true);
-    await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email: emailField, subject: (form.elements.namedItem('subject') as HTMLInputElement).value, message }) });
-    setSubmitting(false);
-    setDone(true);
-    form.reset();
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email: emailField, subject: subject || 'Portfolio Contact Inquiry', message }),
+      });
+      if (!res.ok) throw new Error('Submission failed');
+      setDone(true);
+      form.reset();
+      setTimeout(() => setDone(false), 5000);
+    } catch {
+      setValidation('Failed to send message. Please try again or email directly.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const socialLinks = [
