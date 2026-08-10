@@ -1,10 +1,11 @@
 import { Pool } from 'pg';
 
-const isProduction = process.env.NODE_ENV === 'production' || !!process.env.DATABASE_URL?.includes('render.com');
+const connStr = process.env.DATABASE_URL || '';
+const needsSSL = connStr.includes('sslmode=require') || (connStr.includes('render.com') && !connStr.includes('.internal'));
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: isProduction ? { rejectUnauthorized: false } : undefined,
+  connectionString: connStr || undefined,
+  ssl: needsSSL ? { rejectUnauthorized: false } : false,
 });
 
 export async function query(sql: string, params?: any[]) {
