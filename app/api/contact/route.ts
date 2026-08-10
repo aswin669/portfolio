@@ -12,7 +12,7 @@ export async function GET() {
 export async function POST(req: Request) {
   const body = await req.json();
   const message = await createContact(body);
-  sendContactNotification(body).catch((e) => console.error('Email send error:', e));
+  await sendContactNotification(body);
   createLog({ type: 'user', action: 'contact_submitted', severity: 'info', message: `Contact form submitted by ${body.name}`, email: body.email, details: { subject: body.subject } }).catch(() => {});
   return NextResponse.json(message, { status: 201 });
 }

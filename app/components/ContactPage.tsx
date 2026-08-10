@@ -66,6 +66,17 @@ export default function ContactPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter border-t border-primary pt-stack-lg">
           <section className="md:col-span-7 pr-0 md:pr-gutter">
+            {done && (
+              <div className="mb-8 p-4 border border-green-500/50 bg-green-950/40 text-green-300 font-mono-label text-sm flex items-center justify-between rounded-sm shadow-md">
+                <div className="flex items-center gap-3">
+                  <span className="material-symbols-outlined text-green-400">check_circle</span>
+                  <span>Message sent successfully! I will reply to your email shortly.</span>
+                </div>
+                <button onClick={() => setDone(false)} className="text-green-400 hover:text-green-200 text-lg leading-none">
+                  &times;
+                </button>
+              </div>
+            )}
             <form className="space-y-stack-lg" id="contact-form" onSubmit={handleSubmit}>
               <div className="group relative">
                 <label className="font-mono-label text-mono-label text-secondary block mb-2" htmlFor="name">FULL NAME</label>

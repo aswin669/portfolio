@@ -6,9 +6,6 @@ export async function sendContactNotification(data: {
   subject: string;
   message: string;
 }) {
-  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
-  const port = Number(process.env.SMTP_PORT) || 587;
-  const secure = process.env.SMTP_SECURE === 'true';
   const user = process.env.SMTP_USER || 'aswinashes669@gmail.com';
   const pass = process.env.SMTP_PASS || 'sropyxtvzvaykykt';
   const from = process.env.SMTP_FROM || user;
@@ -21,9 +18,7 @@ export async function sendContactNotification(data: {
 
   try {
     const transporter = nodemailer.createTransport({
-      host,
-      port,
-      secure,
+      service: 'gmail',
       auth: { user, pass },
     });
 
@@ -76,7 +71,7 @@ export async function sendContactNotification(data: {
                     <table style="width:100%;margin-top:24px;border-top:1px solid #000;padding-top:16px">
                       <tr>
                         <td style="font-size:10px;color:#666;text-align:center;letter-spacing:1px;text-transform:uppercase">
-                          Sent via aswin.dev // ${new Date().toLocaleString()}
+                          Sent via portfolio // ${new Date().toLocaleString()}
                         </td>
                       </tr>
                     </table>
