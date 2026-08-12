@@ -59,13 +59,18 @@ export default function ProjectDetail() {
               <h1 className="font-display-lg text-display-lg-mobile md:text-display-lg uppercase mb-stack-md">{project.name}</h1>
               <p className="font-body-lg text-body-lg text-secondary">{project.tagline}</p>
             </div>
-            {project.liveUrl && (
-              <div className="flex gap-4 mb-4">
+            <div className="flex gap-4 mb-4">
+              {project.liveUrl && (
                 <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 border border-primary px-6 py-3 font-label-caps text-label-caps hover:bg-primary hover:text-on-primary transition-all">
-                  LIVE SITE <span className="material-symbols-outlined text-[18px]">open_in_new</span>
+                  WEB APP <span className="material-symbols-outlined text-[18px]">open_in_new</span>
                 </a>
-              </div>
-            )}
+              )}
+              {project.adminUrl && (
+                <a href={project.adminUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 border border-primary px-6 py-3 font-label-caps text-label-caps hover:bg-primary hover:text-on-primary transition-all">
+                  ADMIN PANEL <span className="material-symbols-outlined text-[18px]">open_in_new</span>
+                </a>
+              )}
+            </div>
           </div>
         </header>
 

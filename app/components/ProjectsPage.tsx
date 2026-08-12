@@ -72,7 +72,8 @@ export default function ProjectsPage() {
                     VIEW CASE
                     <span className="material-symbols-outlined text-[16px]">arrow_outward</span>
                   </a>
-                  {project.liveUrl && <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-primary text-primary px-6 py-3 font-label-caps text-label-caps hover:bg-primary hover:text-on-primary transition-all">LIVE SITE</a>}
+                  {project.liveUrl && <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-primary text-primary px-6 py-3 font-label-caps text-label-caps hover:bg-primary hover:text-on-primary transition-all">WEB APP</a>}
+                  {project.adminUrl && <a href={project.adminUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-primary text-primary px-6 py-3 font-label-caps text-label-caps hover:bg-primary hover:text-on-primary transition-all">ADMIN PANEL</a>}
                 </div>
               </div>
               <div className="hidden md:block">

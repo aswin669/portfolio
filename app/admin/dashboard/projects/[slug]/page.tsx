@@ -7,7 +7,7 @@ const emptyForm = {
   name: '', slug: '', tagline: '', year: '', stack: '', type: '', status: 'DRAFT',
   problem: '', solution: '', content: '', metaTitle: '', metaDesc: '', category: '',
   tags: [] as string[], featured: false, noIndex: false, canonical: false, image: '',
-  liveUrl: '', architecture: '', architectureFlow: '', features: '', journey: '', gallery: '',
+  liveUrl: '', adminUrl: '', architecture: '', architectureFlow: '', features: '', journey: '', gallery: '',
 };
 
 export default function AdminProjectDetail() {
@@ -142,9 +142,15 @@ export default function AdminProjectDetail() {
             </div>
           </section>
 
-          <section className="space-y-2">
-            <label className="font-mono-label text-mono-label text-secondary uppercase block">Live Demo URL</label>
-            <input className="w-full font-mono-label text-mono-label form-underline py-1" type="url" value={form.liveUrl} onChange={(e) => setForm({ ...form, liveUrl: e.target.value })} placeholder="https://..." />
+          <section className="grid grid-cols-2 gap-8">
+            <div className="space-y-2">
+              <label className="font-mono-label text-mono-label text-secondary uppercase block">Live Demo URL (Web)</label>
+              <input className="w-full font-mono-label text-mono-label form-underline py-1" type="url" value={form.liveUrl} onChange={(e) => setForm({ ...form, liveUrl: e.target.value })} placeholder="https://..." />
+            </div>
+            <div className="space-y-2">
+              <label className="font-mono-label text-mono-label text-secondary uppercase block">Admin Panel URL</label>
+              <input className="w-full font-mono-label text-mono-label form-underline py-1" type="url" value={form.adminUrl} onChange={(e) => setForm({ ...form, adminUrl: e.target.value })} placeholder="https://..." />
+            </div>
           </section>
 
           <section className="space-y-2">

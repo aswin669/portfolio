@@ -55,7 +55,12 @@ export default function FeaturedProjects() {
                   </a>
                   {projects[0].liveUrl && (
                     <a href={projects[0].liveUrl} target="_blank" rel="noopener noreferrer" className="font-label-caps text-label-caps inline-flex items-center gap-2 border border-primary px-3 py-1 hover:bg-primary hover:text-on-primary transition-all">
-                      LIVE SITE <span className="material-symbols-outlined text-sm">open_in_new</span>
+                      WEB APP <span className="material-symbols-outlined text-sm">open_in_new</span>
+                    </a>
+                  )}
+                  {projects[0].adminUrl && (
+                    <a href={projects[0].adminUrl} target="_blank" rel="noopener noreferrer" className="font-label-caps text-label-caps inline-flex items-center gap-2 border border-primary px-3 py-1 hover:bg-primary hover:text-on-primary transition-all">
+                      ADMIN PANEL <span className="material-symbols-outlined text-sm">open_in_new</span>
                     </a>
                   )}
                 </div>

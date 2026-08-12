@@ -50,6 +50,7 @@ async function initTables() {
     UPDATE projects SET year = '' WHERE year IS NULL;
     UPDATE projects SET type = '' WHERE type IS NULL;
     ALTER TABLE projects ADD COLUMN IF NOT EXISTS live_url VARCHAR(500) DEFAULT '';
+    ALTER TABLE projects ADD COLUMN IF NOT EXISTS admin_url VARCHAR(500) DEFAULT '';
     ALTER TABLE projects ADD COLUMN IF NOT EXISTS architecture TEXT DEFAULT '';
     ALTER TABLE projects ADD COLUMN IF NOT EXISTS features TEXT DEFAULT '';
     ALTER TABLE projects ADD COLUMN IF NOT EXISTS journey TEXT DEFAULT '';
@@ -181,7 +182,7 @@ async function seedTable(file: string, table: string, mapper: (row: any) => any)
 
 async function seedIfEmpty() {
   await Promise.all([
-    seedTable('projects', 'projects', (r) => ({ name: r.name, slug: r.slug, title: r.name, tagline: r.tagline || '', description: r.tagline || r.description || '', problem: r.problem || '', solution: r.solution || '', content: (r.content || ''), category: r.category, stack: r.tech, tech: r.tech, status: r.status, image: r.image || '', featured: r.featured || false, noIndex: false, canonical: false, year: r.year || '', type: r.type || '', caseNo: r.caseNo || '', metaTitle: r.metaTitle, metaDesc: r.metaDesc, liveUrl: r.liveUrl || '', architecture: r.architecture || '', features: r.features || '', journey: r.journey || '', gallery: r.gallery || [], architectureFlow: r.architectureFlow || '' })),
+    seedTable('projects', 'projects', (r) => ({ name: r.name, slug: r.slug, title: r.name, tagline: r.tagline || '', description: r.tagline || r.description || '', problem: r.problem || '', solution: r.solution || '', content: (r.content || ''), category: r.category, stack: r.tech, tech: r.tech, status: r.status, image: r.image || '', featured: r.featured || false, noIndex: false, canonical: false, year: r.year || '', type: r.type || '', caseNo: r.caseNo || '', metaTitle: r.metaTitle, metaDesc: r.metaDesc, liveUrl: r.liveUrl || '', adminUrl: r.adminUrl || '', architecture: r.architecture || '', features: r.features || '', journey: r.journey || '', gallery: r.gallery || [], architectureFlow: r.architectureFlow || '' })),
     seedTable('blog', 'blog_posts', (r) => ({ title: r.title, slug: r.slug, excerpt: r.excerpt, content: r.content, author: r.author, tags: r.tags || [], published: r.published ?? false, image: r.image || '', category: r.category || '', metaTitle: r.metaTitle || '', metaDesc: r.metaDesc || '' })),
     seedTable('categories', 'categories', (r) => ({ name: r.name, slug: r.slug || '', count: r.count || 0 })),
     seedTable('technologies', 'technologies', (r) => ({ name: r.name, slug: r.slug || '' })),
@@ -263,11 +264,11 @@ export async function getProject(idOrSlug: string | number) {
 
 export async function createProject(data: any) {
   await ensureInitialized();
-  const { slug, title, name, description, tagline, content, problem, solution, category, stack, tech, status, image, featured, noIndex, canonical, metaTitle, metaDesc, year, type: ptype, caseNo, liveUrl, architecture, features, journey, gallery, architectureFlow } = data;
+  const { slug, title, name, description, tagline, content, problem, solution, category, stack, tech, status, image, featured, noIndex, canonical, metaTitle, metaDesc, year, type: ptype, caseNo, liveUrl, adminUrl, architecture, features, journey, gallery, architectureFlow } = data;
   const rows = await query(
-    `INSERT INTO projects (slug, title, name, description, tagline, content, problem, solution, category, stack, tech, status, image, featured, no_index, canonical, meta_title, meta_desc, year, type, case_no, live_url, architecture, features, journey, gallery, architecture_flow)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27) RETURNING *`,
-    [slug||'', title||'', name||title||'', description||'', tagline||'', content||'', problem||'', solution||'', category||'', stack||'', tech||stack||'', status||'Draft', image||'', featured||false, noIndex||false, canonical||false, metaTitle||'', metaDesc||'', year||'', ptype||'', caseNo||'', liveUrl||'', architecture||'', features||'', journey||'', gallery||[], architectureFlow||'']
+    `INSERT INTO projects (slug, title, name, description, tagline, content, problem, solution, category, stack, tech, status, image, featured, no_index, canonical, meta_title, meta_desc, year, type, case_no, live_url, admin_url, architecture, features, journey, gallery, architecture_flow)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28) RETURNING *`,
+    [slug||'', title||'', name||title||'', description||'', tagline||'', content||'', problem||'', solution||'', category||'', stack||'', tech||stack||'', status||'Draft', image||'', featured||false, noIndex||false, canonical||false, metaTitle||'', metaDesc||'', year||'', ptype||'', caseNo||'', liveUrl||'', adminUrl||'', architecture||'', features||'', journey||'', gallery||[], architectureFlow||'']
   );
   return toCamelCase(rows[0]);
 }

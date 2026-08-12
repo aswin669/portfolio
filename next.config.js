@@ -14,16 +14,6 @@ const nextConfig = {
     config.resolve.alias['@'] = path.resolve(__dirname, 'app');
     return config;
   },
-  async rewrites() {
-    const backendUrl = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'https://portfolio-backend-rnt1.onrender.com';
-    const target = backendUrl.replace(/\/$/, '');
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${target}/api/:path*`,
-      },
-    ];
-  },
 };
 
 module.exports = nextConfig;
