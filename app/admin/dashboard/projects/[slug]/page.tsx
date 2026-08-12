@@ -7,7 +7,7 @@ const emptyForm = {
   name: '', slug: '', tagline: '', year: '', stack: '', type: '', status: 'DRAFT',
   problem: '', solution: '', content: '', metaTitle: '', metaDesc: '', category: '',
   tags: [] as string[], featured: false, noIndex: false, canonical: false, image: '',
-  liveUrl: '', adminUrl: '', architecture: '', architectureFlow: '', features: '', journey: '', gallery: '',
+  liveUrl: '', adminUrl: '', demoLinks: '[]', architecture: '', architectureFlow: '', features: '', journey: '', gallery: '',
 };
 
 export default function AdminProjectDetail() {
@@ -151,6 +151,17 @@ export default function AdminProjectDetail() {
               <label className="font-mono-label text-mono-label text-secondary uppercase block">Admin Panel URL</label>
               <input className="w-full font-mono-label text-mono-label form-underline py-1" type="url" value={form.adminUrl} onChange={(e) => setForm({ ...form, adminUrl: e.target.value })} placeholder="https://..." />
             </div>
+          </section>
+
+          <section className="space-y-2">
+            <label className="font-mono-label text-mono-label text-secondary uppercase block">Extra Demo Links <span className="text-secondary opacity-60">(JSON: [{'{'}label, url{'}'}])</span></label>
+            <textarea
+              className="w-full font-body-md text-body-md form-underline py-2 resize-none font-mono text-sm"
+              rows={3}
+              placeholder='[{&quot;label&quot;:&quot;iOS App&quot;,&quot;url&quot;:&quot;...&quot;}]'
+              value={form.demoLinks}
+              onChange={(e) => setForm({ ...form, demoLinks: e.target.value })}
+            />
           </section>
 
           <section className="space-y-2">

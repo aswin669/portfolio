@@ -63,6 +63,15 @@ export default function FeaturedProjects() {
                       ADMIN PANEL <span className="material-symbols-outlined text-sm">open_in_new</span>
                     </a>
                   )}
+                  {projects[0].demoLinks && (() => {
+                    try {
+                      return JSON.parse(projects[0].demoLinks).map((link: any, idx: number) => (
+                        <a key={idx} href={link.url} target="_blank" rel="noopener noreferrer" className="font-label-caps text-label-caps inline-flex items-center gap-2 border border-primary px-3 py-1 hover:bg-primary hover:text-on-primary transition-all uppercase">
+                          {link.label} <span className="material-symbols-outlined text-sm">open_in_new</span>
+                        </a>
+                      ));
+                    } catch { return null; }
+                  })()}
                 </div>
               </div>
             </div>

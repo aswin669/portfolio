@@ -59,7 +59,7 @@ export default function ProjectDetail() {
               <h1 className="font-display-lg text-display-lg-mobile md:text-display-lg uppercase mb-stack-md">{project.name}</h1>
               <p className="font-body-lg text-body-lg text-secondary">{project.tagline}</p>
             </div>
-            <div className="flex gap-4 mb-4">
+            <div className="flex flex-wrap gap-4 mb-4">
               {project.liveUrl && (
                 <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 border border-primary px-6 py-3 font-label-caps text-label-caps hover:bg-primary hover:text-on-primary transition-all">
                   WEB APP <span className="material-symbols-outlined text-[18px]">open_in_new</span>
@@ -70,6 +70,15 @@ export default function ProjectDetail() {
                   ADMIN PANEL <span className="material-symbols-outlined text-[18px]">open_in_new</span>
                 </a>
               )}
+              {project.demoLinks && (() => {
+                try {
+                  return JSON.parse(project.demoLinks).map((link: any, idx: number) => (
+                    <a key={idx} href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 border border-primary px-6 py-3 font-label-caps text-label-caps hover:bg-primary hover:text-on-primary transition-all uppercase">
+                      {link.label} <span className="material-symbols-outlined text-[18px]">open_in_new</span>
+                    </a>
+                  ));
+                } catch { return null; }
+              })()}
             </div>
           </div>
         </header>
