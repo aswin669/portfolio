@@ -39,7 +39,7 @@ export default function FloatingContactButton() {
               d="M 80, 80 m -62, 0 a 62,62 0 1,1 124,0 a 62,62 0 1,1 -124,0"
               fill="none"
             />
-            <text className="fill-current text-primary dark:text-white font-mono-label text-[10.5px] uppercase tracking-[0.24em] font-semibold">
+            <text className="fill-current text-primary font-mono-label text-[10.5px] uppercase tracking-[0.24em] font-semibold">
               <textPath href="#contactCirclePath" startOffset="0%">
                 CONTACT ✦ CONTACT ✦ CONTACT ✦ CONTACT ✦
               </textPath>
@@ -47,11 +47,11 @@ export default function FloatingContactButton() {
           </svg>
         </div>
 
-        {/* Layer 2: Stationary Warm Yellow Center Circle */}
-        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-[#ffc72c] dark:bg-[#fbbf24] rounded-full flex items-center justify-center shadow-lg transition-transform duration-300 ease-out group-hover:scale-105">
+        {/* Layer 2: Stationary Primary Theme Center Circle */}
+        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary text-on-primary border border-outline-variant/60 rounded-full flex items-center justify-center shadow-xl transition-transform duration-300 ease-out group-hover:scale-105">
           {/* Layer 3: Stationary Minimalist Envelope Icon */}
           <svg
-            className="w-7 h-7 sm:w-9 sm:h-9 text-black"
+            className="w-7 h-7 sm:w-9 sm:h-9 text-current"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
