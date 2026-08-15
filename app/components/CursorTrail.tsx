@@ -36,7 +36,7 @@ export default function CursorTrail() {
     let hasMoved = false;
 
     // Queue of trail points for spring / lerp physics
-    const POINT_COUNT = 16;
+    const POINT_COUNT = 10;
     const points: TrailPoint[] = Array.from({ length: POINT_COUNT }, () => ({
       x: -100,
       y: -100,
