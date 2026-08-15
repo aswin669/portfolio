@@ -36,7 +36,7 @@ export default function CursorTrail() {
     let hasMoved = false;
 
     // Queue of trail points for spring / lerp physics
-    const POINT_COUNT = 10;
+    const POINT_COUNT = 14;
     const points: TrailPoint[] = Array.from({ length: POINT_COUNT }, () => ({
       x: -100,
       y: -100,
@@ -97,7 +97,7 @@ export default function CursorTrail() {
         // Subsequent points follow leader with dynamic easing
         for (let i = 1; i < POINT_COUNT; i++) {
           const leader = points[i - 1];
-          const ease = 0.42 + (i / POINT_COUNT) * 0.16;
+          const ease = 0.4 + (i / POINT_COUNT) * 0.15;
           points[i].x += (leader.x - points[i].x) * ease;
           points[i].y += (leader.y - points[i].y) * ease;
         }
@@ -111,17 +111,29 @@ export default function CursorTrail() {
           ctx.lineCap = 'round';
           ctx.lineJoin = 'round';
 
-          // Main crisp tapering spline path segments (No glow/shadow)
+          // Main crisp tapering spline path using quadratic Bezier curve interpolation
           for (let i = 0; i < POINT_COUNT - 1; i++) {
             const p1 = points[i];
             const p2 = points[i + 1];
+            const p3 = points[i + 2] || p2;
+
+            const mid1X = (p1.x + p2.x) / 2;
+            const mid1Y = (p1.y + p2.y) / 2;
+            const mid2X = (p2.x + p3.x) / 2;
+            const mid2Y = (p2.y + p3.y) / 2;
+
             const progress = 1 - i / (POINT_COUNT - 1);
-            const widthScale = 0.3 + Math.pow(progress, 1.2) * 1.2;
+            const widthScale = 0.35 + Math.pow(progress, 1.2) * 1.35;
             const alphaScale = Math.pow(progress, 0.65) * opacity * (isDark ? 0.8 : 0.95);
 
             ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
+            if (i === 0) {
+              ctx.moveTo(p1.x, p1.y);
+              ctx.quadraticCurveTo(p1.x, p1.y, mid1X, mid1Y);
+            } else {
+              ctx.moveTo(mid1X, mid1Y);
+              ctx.quadraticCurveTo(p2.x, p2.y, mid2X, mid2Y);
+            }
             ctx.strokeStyle = `rgba(${rgb}, ${alphaScale})`;
             ctx.lineWidth = widthScale;
             ctx.stroke();
