@@ -18,8 +18,8 @@ export default function FloatingContactButton() {
   }, []);
 
   return (
-    <Link
-      href="/contact"
+    <a
+      href="https://portfolio-flame-nu-21.vercel.app/contact"
       aria-label="Contact us"
       className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-[9000] group flex items-center justify-center select-none outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-full"
     >
@@ -64,6 +64,6 @@ export default function FloatingContactButton() {
           </svg>
         </div>
       </div>
-    </Link>
+    </a>
   );
 }

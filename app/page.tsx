@@ -8,6 +8,7 @@ import Services from '@/components/Services';
 import Testimonial from '@/components/Testimonial';
 import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
+import FloatingContactButton from '@/components/FloatingContactButton';
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
       <Testimonial />
       <CTASection />
       <Footer />
+      <FloatingContactButton />
     </main>
   );
 }
