@@ -202,3 +202,15 @@ body {
   background-color: #000000;
   color: #ffffff;
 }
+
+/* Interactive Cursor Trail Canvas Overlay */
+.cursor-trail-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none !important;
+  z-index: 9999;
+}
+

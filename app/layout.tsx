@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import CursorTrail from '@/components/CursorTrail';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
 import { getAllSettings } from '@/lib/db';
 
@@ -26,9 +27,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&amp;family=Geist:wght@400;600;700;800&amp;display=swap" rel="stylesheet" />
       </head>
       <body className="bg-surface text-on-surface font-body-md overflow-x-hidden">
+        <CursorTrail />
         {children}
         <AnalyticsTracker />
       </body>
     </html>
   );
 }
+
+
