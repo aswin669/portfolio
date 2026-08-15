@@ -129,7 +129,8 @@ export default function AdminProjectDetail() {
 
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        alert(`Save failed: ${errData.error || res.statusText}`);
+        const msg = errData.message || errData.error || `HTTP ${res.status} ${res.statusText}`.trim();
+        alert(`Save failed: ${msg}`);
       } else {
         const savedData = await res.json();
         if (savedData && savedData.id) {

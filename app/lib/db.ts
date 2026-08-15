@@ -293,20 +293,28 @@ export async function updateProject(id: number, data: any) {
     image: 'image',
     featured: 'featured',
     noIndex: 'no_index',
+    no_index: 'no_index',
     canonical: 'canonical',
     metaTitle: 'meta_title',
+    meta_title: 'meta_title',
     metaDesc: 'meta_desc',
+    meta_desc: 'meta_desc',
     year: 'year',
     type: 'type',
     caseNo: 'case_no',
+    case_no: 'case_no',
     liveUrl: 'live_url',
+    live_url: 'live_url',
     adminUrl: 'admin_url',
+    admin_url: 'admin_url',
     demoLinks: 'demo_links',
+    demo_links: 'demo_links',
     architecture: 'architecture',
     features: 'features',
     journey: 'journey',
     gallery: 'gallery',
     architectureFlow: 'architecture_flow',
+    architecture_flow: 'architecture_flow',
     tags: 'tags',
   };
 
@@ -315,12 +323,16 @@ export async function updateProject(id: number, data: any) {
   let idx = 1;
 
   for (const [key, val] of Object.entries(data)) {
-    if (['id', 'createdAt', 'updatedAt', 'created_at', 'updated_at'].includes(key)) {
-      continue;
+    const dbKey = allowedKeys[key];
+    if (!dbKey) continue; // Skip unknown keys safely
+
+    let valueToStore = val;
+    if (['demoLinks', 'architectureFlow', 'features', 'journey'].includes(key) && typeof val === 'object' && val !== null) {
+      valueToStore = JSON.stringify(val);
     }
-    const dbKey = allowedKeys[key] || key.replace(/([A-Z])/g, (_, c) => `_${c.toLowerCase()}`);
+
     fields.push(`${dbKey} = $${idx++}`);
-    values.push(val);
+    values.push(valueToStore);
   }
 
   if (!fields.length) return getProject(id);
@@ -368,22 +380,34 @@ export async function createBlogPost(data: any) {
 
 export async function updateBlogPost(id: number, data: any) {
   await ensureInitialized();
+  const allowedKeys: Record<string, string> = {
+    title: 'title',
+    slug: 'slug',
+    excerpt: 'excerpt',
+    content: 'content',
+    author: 'author',
+    tags: 'tags',
+    published: 'published',
+    image: 'image',
+    category: 'category',
+    metaTitle: 'meta_title',
+    meta_title: 'meta_title',
+    metaDesc: 'meta_desc',
+    meta_desc: 'meta_desc',
+  };
+
   const fields: string[] = [];
   const values: any[] = [];
   let idx = 1;
+
   for (const [key, val] of Object.entries(data)) {
-    if (['id', 'createdAt', 'updatedAt', 'created_at', 'updated_at'].includes(key)) {
-      continue;
-    }
-    if (key === 'tags' && Array.isArray(val)) {
-      fields.push(`tags = $${idx++}`);
-      values.push(val);
-    } else {
-      const dbKey = key.replace(/([A-Z])/g, (_, c) => `_${c.toLowerCase()}`);
-      fields.push(`${dbKey} = $${idx++}`);
-      values.push(val);
-    }
+    const dbKey = allowedKeys[key];
+    if (!dbKey) continue; // Skip unknown keys safely
+
+    fields.push(`${dbKey} = $${idx++}`);
+    values.push(val);
   }
+
   if (!fields.length) return getBlogPost(id);
   fields.push('updated_at = NOW()');
   values.push(id);
