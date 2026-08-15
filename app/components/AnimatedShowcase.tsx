@@ -3,16 +3,43 @@
 import React, { useEffect, useRef, useState } from 'react';
 import LightboxModal, { ShowcaseItem } from './LightboxModal';
 
+// Roman numerals helper for Chapter progress tracker (CHAPTER I, CHAPTER II, etc.)
+function toRoman(num: number): string {
+  const lookup: [string, number][] = [
+    ['M', 1000],
+    ['CM', 900],
+    ['D', 500],
+    ['CD', 400],
+    ['C', 100],
+    ['XC', 90],
+    ['L', 50],
+    ['XL', 40],
+    ['X', 10],
+    ['IX', 9],
+    ['V', 5],
+    ['IV', 4],
+    ['I', 1],
+  ];
+  let roman = '';
+  for (const [letter, value] of lookup) {
+    while (num >= value) {
+      roman += letter;
+      num -= value;
+    }
+  }
+  return roman || 'I';
+}
+
 export default function AnimatedShowcase() {
   const [items, setItems] = useState<ShowcaseItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
-  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const runwayRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    // Check reduced motion preference
+    // Detect reduced motion preference
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setReducedMotion(mediaQuery.matches);
     const handleMotionChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
@@ -41,14 +68,16 @@ export default function AnimatedShowcase() {
     let animId: number;
 
     const handleScroll = () => {
-      if (!sectionRef.current) return;
-      const rect = sectionRef.current.getBoundingClientRect();
+      if (!runwayRef.current) return;
+      const rect = runwayRef.current.getBoundingClientRect();
       const windowHeight = window.innerHeight;
 
-      // Compute total travel progress through viewport (0 = entering, 1 = exiting)
-      const totalDistance = windowHeight + rect.height;
-      const currentPos = windowHeight - rect.top;
-      const rawProgress = currentPos / totalDistance;
+      // Calculate progress (0 to 1) as section runway scrolls through viewport
+      const totalScrollable = rect.height - windowHeight;
+      if (totalScrollable <= 0) return;
+
+      const currentScroll = -rect.top;
+      const rawProgress = currentScroll / totalScrollable;
       const clampedProgress = Math.max(0, Math.min(1, rawProgress));
 
       setScrollProgress(clampedProgress);
@@ -72,110 +101,112 @@ export default function AnimatedShowcase() {
 
   if (loading) {
     return (
-      <section className="bg-black py-20 px-6 min-h-[400px] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+      <section className="bg-[#f5f5f3] dark:bg-[#0a0a0a] py-20 px-6 min-h-[400px] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
       </section>
     );
   }
 
   if (items.length === 0) {
-    return null; // Gracefully hide section if no showcase items exist
+    return null; // Gracefully hide if no active showcase items exist
   }
+
+  const N = items.length;
+  // Current focal index based on scroll progress
+  const currentFocalIndex = Math.min(N - 1, Math.floor(scrollProgress * N));
 
   return (
     <section
       id="showcase"
-      ref={sectionRef}
-      className="bg-black text-white py-24 sm:py-32 lg:py-40 px-4 sm:px-8 md:px-12 relative overflow-hidden border-b border-neutral-900"
+      ref={runwayRef}
+      className="relative w-full h-[350vh] bg-[#f5f5f3] dark:bg-[#080808] text-primary transition-colors border-y border-outline-variant/60"
     >
-      {/* Editorial Header */}
-      <div className="max-w-6xl mx-auto mb-16 sm:mb-24 flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-          <div className="flex items-center gap-3 mb-4">
-            <span className="w-8 h-[1px] bg-neutral-700"></span>
-            <span className="font-mono-label text-xs uppercase tracking-[0.3em] text-neutral-500 font-medium">
-              FEATURED VISUALS
+      {reducedMotion ? (
+        /* Reduced Motion Fallback: Clean Responsive Grid */
+        <div className="py-20 px-6 max-w-7xl mx-auto">
+          <div className="mb-12">
+            <span className="font-mono-label text-xs uppercase tracking-[0.3em] text-secondary block mb-2">
+              EDITORIAL VISUALS
             </span>
+            <h2 className="font-display-lg text-3xl font-bold uppercase">Showcase Gallery</h2>
           </div>
-          <h3 className="font-display-lg text-2xl sm:text-4xl md:text-5xl font-extralight tracking-tight uppercase">
-            ANIMATED SHOWCASE
-          </h3>
-        </div>
-        <p className="font-body-md text-xs sm:text-sm text-neutral-400 max-w-sm">
-          Scroll down to explore curated project visuals and interface compositions in motion.
-        </p>
-      </div>
-
-      {/* Main Animated Composition / Grid Container */}
-      <div className="max-w-7xl mx-auto min-h-[650px] md:min-h-[850px] relative">
-        {reducedMotion ? (
-          /* Reduced Motion Fallback: Clean Responsive Grid */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {items.map((item, index) => (
               <div
                 key={item.id}
                 onClick={() => setLightboxIndex(index)}
-                className="group cursor-pointer bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-lg transition-transform duration-300 hover:-translate-y-1"
+                className="group cursor-pointer bg-surface border border-outline-variant rounded-xl overflow-hidden shadow-lg transition-transform duration-300 hover:-translate-y-1"
               >
-                <div className="aspect-[16/10] w-full overflow-hidden bg-neutral-950">
+                <div className="aspect-[16/10] w-full overflow-hidden bg-black">
                   <img
                     src={item.image_url}
-                    alt={item.title || 'Showcase landscape image'}
+                    alt={item.title || 'Showcase image'}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
                   />
                 </div>
-                {(item.title || item.category) && (
-                  <div className="p-4 flex items-center justify-between border-t border-neutral-800">
-                    <span className="font-display-lg text-sm font-semibold text-white">
-                      {item.title}
+                <div className="p-4">
+                  <h3 className="font-bold text-sm">{item.title}</h3>
+                  {item.category && (
+                    <span className="text-[10px] uppercase font-mono-label px-2 py-0.5 bg-surface-container rounded mt-1 inline-block">
+                      {item.category}
                     </span>
-                    {item.category && (
-                      <span className="font-mono-label text-[10px] uppercase tracking-wider text-neutral-400 px-2 py-0.5 bg-neutral-800 rounded">
-                        {item.category}
-                      </span>
-                    )}
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             ))}
           </div>
-        ) : (
-          /* Cinematic Scroll-Linked Dynamic Parallax Composition */
-          <div className="relative w-full h-[700px] md:h-[900px]">
+        </div>
+      ) : (
+        /* Sticky Viewport Animation Engine (Matching Reference Images 1, 2, 3) */
+        <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between p-6 md:p-10 select-none">
+          {/* Top Bar Editorial Header */}
+          <div className="w-full max-w-7xl mx-auto flex items-center justify-between z-10 pt-2">
+            <div className="flex items-center gap-3">
+              <span className="w-6 h-[1px] bg-primary"></span>
+              <span className="font-mono-label text-[11px] uppercase tracking-[0.25em] text-secondary font-semibold">
+                EDITORIAL SHOWCASE
+              </span>
+            </div>
+            <span className="font-mono-label text-[11px] uppercase tracking-widest text-secondary font-medium">
+              SCROLL TO EXPLORE
+            </span>
+          </div>
+
+          {/* Watermark Background Typography */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden select-none opacity-[0.04]">
+            <span className="font-display-lg text-[14vw] font-black uppercase tracking-tighter whitespace-nowrap">
+              EDITORIAL VISUALS
+            </span>
+          </div>
+
+          {/* Main Choreographed Cards Runway */}
+          <div className="relative w-full max-w-7xl mx-auto flex-1 flex items-center justify-center z-10 my-4">
             {items.map((item, index) => {
-              const N = items.length;
-              // Spread activation progress window across items
-              const itemProgressOffset = index / N;
-              
-              // Deterministic spatial variation parameters per card
-              const col = index % 3; // 0 (left), 1 (center), 2 (right)
-              const baseRotations = [-4, 3.5, -2.5, 5, -3, 2, -5, 4];
-              const rotation = baseRotations[index % baseRotations.length];
+              // Calculate delta relative to scroll position
+              // delta = 0 means card is in full central focus
+              const targetProgress = N > 1 ? index / (N - 1) : 0;
+              const delta = (scrollProgress - targetProgress) * (N > 1 ? N * 0.85 : 1);
 
-              // Base column left percentages
-              const leftPositions = [5, 36, 67];
-              const leftPos = leftPositions[col];
+              // Position X calculation (vw units)
+              const translateX = -delta * 48; // moves left as user scrolls down
 
-              // Top initial offsets
-              const topOffsets = [5, 22, 12, 40, 55, 32, 70, 60];
-              const baseTop = topOffsets[index % topOffsets.length];
+              // Position Y calculation with alternating vertical offset
+              const vertDirection = index % 2 === 0 ? -1 : 1;
+              const translateY = vertDirection * Math.sin(delta * 1.2) * 35;
 
-              // Dynamic scroll transform calculations
-              // Card vertical translation tied to scroll progress
-              const yTranslate = (0.5 - scrollProgress) * (180 + (index % 4) * 60);
+              // Scale calculation: peak scale (1.06) when centered (delta = 0), shrinking to 0.75 off-center
+              const absDelta = Math.abs(delta);
+              const scale = Math.max(0.72, 1.06 - absDelta * 0.28);
 
-              // Scale expansion when centered in viewport
-              const centerDist = Math.abs(scrollProgress - 0.5);
-              const scale = 1.0 + (0.08 * (1 - Math.min(1, centerDist * 2))) * (index % 2 === 0 ? 1 : -0.5);
+              // Rotation calculation: smoothly transitions from positive to negative angle
+              const rotDirection = index % 2 === 0 ? 1 : -1;
+              const rotate = rotDirection * (3.5 - Math.min(6, absDelta * 2.5));
 
-              // Opacity fading near viewport edges
-              let cardOpacity = 1;
-              if (scrollProgress < 0.1) {
-                cardOpacity = scrollProgress / 0.1;
-              } else if (scrollProgress > 0.9) {
-                cardOpacity = (1 - scrollProgress) / 0.1;
-              }
+              // Z-Index calculation: highest when near focal center
+              const zIndex = Math.max(1, 50 - Math.round(absDelta * 20));
+
+              // Opacity calculation: fully opaque when near viewport, smoothly fades far offscreen
+              const opacity = Math.max(0, Math.min(1, 1.3 - absDelta * 0.75));
 
               return (
                 <div
@@ -183,44 +214,46 @@ export default function AnimatedShowcase() {
                   onClick={() => setLightboxIndex(index)}
                   style={{
                     position: 'absolute',
-                    left: `${leftPos}%`,
-                    top: `${baseTop}%`,
-                    width: '30%',
-                    minWidth: '260px',
-                    maxWidth: '420px',
-                    transform: `translate3d(0, ${yTranslate}px, 0) scale(${scale.toFixed(3)}) rotate(${rotation}deg)`,
-                    opacity: Math.max(0.2, Math.min(1, cardOpacity)),
-                    zIndex: 10 + (index % 5),
+                    left: '50%',
+                    top: '50%',
+                    width: 'clamp(280px, 32vw, 520px)',
+                    transform: `translate3d(calc(-50% + ${translateX}vw), calc(-50% + ${translateY}px), 0) scale(${scale.toFixed(3)}) rotate(${rotate.toFixed(2)}deg)`,
+                    zIndex,
+                    opacity,
                     willChange: 'transform, opacity',
                   }}
-                  className="group cursor-pointer bg-neutral-900/90 backdrop-blur-sm border border-neutral-700/60 rounded-xl overflow-hidden shadow-2xl transition-shadow duration-300 hover:shadow-white/10 hover:border-white/40"
+                  className="group cursor-pointer bg-surface border border-outline-variant/80 rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 hover:shadow-primary/20 hover:border-primary/50"
                 >
-                  {/* Landscape Image Container */}
+                  {/* Magazine Cover / Landscape Image Card Container */}
                   <div className="aspect-[16/10] w-full overflow-hidden bg-black relative">
                     <img
                       src={item.image_url}
-                      alt={item.title || item.category || 'Showcase image'}
+                      alt={item.title || item.category || 'Showcase visual'}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-40 group-hover:opacity-20 transition-opacity"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent opacity-50 group-hover:opacity-30 transition-opacity"></div>
+
+                    {/* Category Tag Overlay */}
+                    {item.category && (
+                      <div className="absolute top-3 right-3 z-10">
+                        <span className="font-mono-label text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 bg-black/60 backdrop-blur-md text-white border border-white/20 rounded-full">
+                          {item.category}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Card Info Overlay */}
-                  {(item.title || item.category || item.subtitle) && (
-                    <div className="p-3.5 sm:p-4 bg-neutral-950/90 border-t border-neutral-800 flex flex-col gap-1">
-                      <div className="flex items-center justify-between">
-                        <span className="font-display-lg text-xs sm:text-sm font-semibold text-white group-hover:text-white transition-colors truncate">
-                          {item.title || 'Visual Project'}
-                        </span>
-                        {item.category && (
-                          <span className="font-mono-label text-[9px] uppercase tracking-wider text-neutral-300 px-2 py-0.5 bg-neutral-800 rounded">
-                            {item.category}
-                          </span>
-                        )}
-                      </div>
+                  {/* Card Bottom Meta Bar */}
+                  {(item.title || item.subtitle) && (
+                    <div className="p-4 bg-surface-container-low border-t border-outline-variant flex flex-col gap-1">
+                      {item.title && (
+                        <h4 className="font-display-lg text-sm sm:text-base font-bold text-primary truncate group-hover:text-primary transition-colors">
+                          {item.title}
+                        </h4>
+                      )}
                       {item.subtitle && (
-                        <p className="font-body-md text-[11px] text-neutral-400 line-clamp-1">
+                        <p className="font-body-md text-xs text-secondary line-clamp-1">
                           {item.subtitle}
                         </p>
                       )}
@@ -230,10 +263,58 @@ export default function AnimatedShowcase() {
               );
             })}
           </div>
-        )}
-      </div>
 
-      {/* Lightbox Modal */}
+          {/* Bottom Bar Chapter Tracker & Progress Line (Matching Reference Images 1, 2, 3) */}
+          <div className="w-full max-w-7xl mx-auto z-10 pb-2 flex flex-col gap-3">
+            {/* Scroll Progress Bar */}
+            <div className="w-full bg-outline-variant/40 h-[2px] rounded-full overflow-hidden">
+              <div
+                className="bg-primary h-full transition-all duration-150 ease-out"
+                style={{ width: `${(scrollProgress * 100).toFixed(1)}%` }}
+              ></div>
+            </div>
+
+            {/* Chapter Items List */}
+            <div className="flex items-center justify-between overflow-x-auto gap-6 py-1 no-scrollbar">
+              <div className="flex items-center gap-6">
+                {items.slice(0, 6).map((item, idx) => {
+                  const isActive = idx === currentFocalIndex;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        const targetPos = N > 1 ? idx / (N - 1) : 0;
+                        if (runwayRef.current) {
+                          const rect = runwayRef.current.getBoundingClientRect();
+                          const totalScrollable = rect.height - window.innerHeight;
+                          window.scrollTo({
+                            top: window.scrollY + rect.top + targetPos * totalScrollable,
+                            behavior: 'smooth',
+                          });
+                        }
+                      }}
+                      className={`flex items-center gap-2 font-mono-label text-xs uppercase transition-all ${
+                        isActive
+                          ? 'text-primary font-bold opacity-100 scale-105'
+                          : 'text-secondary opacity-50 hover:opacity-80'
+                      }`}
+                    >
+                      <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-primary' : 'bg-transparent'}`}></span>
+                      <span>CHAPTER {toRoman(idx + 1)}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <span className="font-mono-label text-[11px] text-secondary uppercase font-medium hidden sm:inline-block">
+                {currentFocalIndex + 1} OF {N} EDITORIAL COVER{N > 1 ? 'S' : ''}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Fullscreen Lightbox Modal */}
       <LightboxModal
         items={items}
         currentIndex={lightboxIndex}
