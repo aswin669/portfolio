@@ -185,18 +185,18 @@ export default function AnimatedShowcase() {
               // Calculate delta relative to scroll position
               // targetProgress for card i
               const targetProgress = N > 1 ? index / (N - 1) : 0;
-              const delta = (scrollProgress - targetProgress) * (N > 1 ? N * 0.65 : 1);
+              const delta = (scrollProgress - targetProgress) * (N > 1 ? N * 0.8 : 1);
 
-              // DIAGONAL MOVEMENT VECTOR (Tighter Distance):
+              // DIAGONAL MOVEMENT VECTOR:
               // When delta < 0 (entering from bottom-right):
               // translateX is POSITIVE (+vw), translateY is POSITIVE (+vh)
               // When delta > 0 (exiting to top-left):
               // translateX is NEGATIVE (-vw), translateY is NEGATIVE (-vh)
-              const baseDistX = 28; // vw distance (reduced for tighter card spacing)
-              const baseDistY = 28; // vh distance (reduced for tighter card spacing)
+              const baseDistX = 52; // vw distance
+              const baseDistY = 52; // vh distance
 
-              const varX = ((index % 3) - 1) * 5; // subtle variation per card
-              const varY = (index % 2 === 0 ? -3.5 : 3.5); // subtle vertical offset
+              const varX = ((index % 3) - 1) * 8; // slight variation per card
+              const varY = (index % 2 === 0 ? -6 : 6); // slight vertical offset
 
               const translateX = -delta * baseDistX + varX;
               const translateY = -delta * baseDistY + varY;

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import CursorTrail from '@/components/CursorTrail';
+import FloatingContactButton from '@/components/FloatingContactButton';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
 import { getAllSettings } from '@/lib/db';
 
@@ -29,10 +30,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-surface text-on-surface font-body-md overflow-x-hidden">
         <CursorTrail />
         {children}
+        <FloatingContactButton />
         <AnalyticsTracker />
       </body>
     </html>
   );
-}
-
 
