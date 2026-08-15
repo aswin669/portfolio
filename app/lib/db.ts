@@ -129,6 +129,19 @@ async function initTables() {
       path VARCHAR(500) DEFAULT '',
       timestamp TIMESTAMP DEFAULT NOW()
     );
+    ALTER TABLE analytics ADD COLUMN IF NOT EXISTS session_id VARCHAR(255) DEFAULT '';
+    ALTER TABLE analytics ADD COLUMN IF NOT EXISTS visitor_id VARCHAR(255) DEFAULT '';
+    ALTER TABLE analytics ADD COLUMN IF NOT EXISTS referrer VARCHAR(500) DEFAULT '';
+    ALTER TABLE analytics ADD COLUMN IF NOT EXISTS device_type VARCHAR(50) DEFAULT 'Desktop';
+    ALTER TABLE analytics ADD COLUMN IF NOT EXISTS os VARCHAR(100) DEFAULT 'Unknown';
+    ALTER TABLE analytics ADD COLUMN IF NOT EXISTS browser VARCHAR(100) DEFAULT 'Unknown';
+    ALTER TABLE analytics ADD COLUMN IF NOT EXISTS screen_res VARCHAR(50) DEFAULT '';
+    ALTER TABLE analytics ADD COLUMN IF NOT EXISTS language VARCHAR(50) DEFAULT '';
+    ALTER TABLE analytics ADD COLUMN IF NOT EXISTS country VARCHAR(100) DEFAULT 'Unknown';
+    ALTER TABLE analytics ADD COLUMN IF NOT EXISTS region VARCHAR(100) DEFAULT '';
+    ALTER TABLE analytics ADD COLUMN IF NOT EXISTS city VARCHAR(100) DEFAULT '';
+    ALTER TABLE analytics ADD COLUMN IF NOT EXISTS ip VARCHAR(45) DEFAULT '';
+    ALTER TABLE analytics ADD COLUMN IF NOT EXISTS duration_seconds INT DEFAULT 0;
     CREATE TABLE IF NOT EXISTS settings (
       key VARCHAR(255) PRIMARY KEY,
       value TEXT DEFAULT ''
@@ -604,15 +617,84 @@ export async function deleteExperience(id: number) {
 }
 
 // Analytics
-export async function recordVisit(path: string) {
+export async function recordVisit(data: string | {
+  path: string;
+  sessionId?: string;
+  visitorId?: string;
+  referrer?: string;
+  deviceType?: string;
+  os?: string;
+  browser?: string;
+  screenRes?: string;
+  language?: string;
+  country?: string;
+  region?: string;
+  city?: string;
+  ip?: string;
+  durationSeconds?: number;
+}) {
   await ensureInitialized();
-  await query('INSERT INTO analytics (path) VALUES ($1)', [path]);
+  const payload = typeof data === 'string' ? { path: data } : data;
+  const {
+    path = '/',
+    sessionId = '',
+    visitorId = '',
+    referrer = '',
+    deviceType = 'Desktop',
+    os = 'Unknown',
+    browser = 'Unknown',
+    screenRes = '',
+    language = '',
+    country = 'Unknown',
+    region = '',
+    city = '',
+    ip = '',
+    durationSeconds = 0,
+  } = payload;
+
+  await query(
+    `INSERT INTO analytics (path, session_id, visitor_id, referrer, device_type, os, browser, screen_res, language, country, region, city, ip, duration_seconds)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
+    [
+      path || '/',
+      sessionId || '',
+      visitorId || '',
+      referrer || 'Direct / None',
+      deviceType || 'Desktop',
+      os || 'Unknown',
+      browser || 'Unknown',
+      screenRes || '',
+      language || '',
+      country || 'Unknown',
+      region || '',
+      city || '',
+      ip || '',
+      durationSeconds || 0,
+    ]
+  );
 }
 
-export async function getAnalytics(days: number) {
+export async function getAnalytics(options?: number | {
+  days?: number;
+  page?: number;
+  limit?: number;
+  search?: string;
+  country?: string;
+  device?: string;
+}) {
   await ensureInitialized();
+  const opts = typeof options === 'number' ? { days: options } : (options || {});
+  const days = Math.min(Math.max(opts.days || 7, 1), 365);
+  const page = Math.max(opts.page || 1, 1);
+  const limit = Math.min(Math.max(opts.limit || 15, 5), 100);
+  const offset = (page - 1) * limit;
+  const search = (opts.search || '').trim().toLowerCase();
+  const filterCountry = (opts.country || '').trim();
+  const filterDevice = (opts.device || '').trim();
+
+  // Daily trend views & visitors
   const daily = await query(
-    `SELECT DATE(timestamp) as date, COUNT(*) as count
+    `SELECT DATE(timestamp) as date, COUNT(*) as count, COUNT(DISTINCT visitor_id) as visitors
      FROM analytics
      WHERE timestamp >= NOW() - ($1 || ' days')::INTERVAL
      GROUP BY DATE(timestamp)
@@ -620,47 +702,218 @@ export async function getAnalytics(days: number) {
     [days]
   );
 
-  const totalResult = await query('SELECT COUNT(*) as count FROM analytics');
+  // Overall counts
+  const totalResult = await query('SELECT COUNT(*) as count, COUNT(DISTINCT visitor_id) as visitors, COUNT(DISTINCT session_id) as sessions, COALESCE(AVG(duration_seconds), 0) as avg_duration FROM analytics');
   const total = parseInt(totalResult[0]?.count || '0');
+  const totalVisitors = parseInt(totalResult[0]?.visitors || '0');
+  const totalSessions = parseInt(totalResult[0]?.sessions || '0');
+  const avgDuration = Math.round(parseFloat(totalResult[0]?.avg_duration || '0'));
 
-  const todayStr = new Date().toISOString().slice(0, 10);
-  const todayResult = await query(
-    'SELECT COUNT(*) as count FROM analytics WHERE DATE(timestamp) = $1',
-    [todayStr]
+  // Live active visitors (in last 5 mins)
+  const liveResult = await query(
+    `SELECT COUNT(DISTINCT COALESCE(NULLIF(visitor_id, ''), NULLIF(session_id, ''), id::text)) as count
+     FROM analytics
+     WHERE timestamp >= NOW() - INTERVAL '5 minutes'`
   );
+  const liveVisitors = parseInt(liveResult[0]?.count || '0');
+
+  // Today, week, month
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayResult = await query('SELECT COUNT(*) as count FROM analytics WHERE DATE(timestamp) = $1', [todayStr]);
   const today = parseInt(todayResult[0]?.count || '0');
 
-  const weekResult = await query(
-    'SELECT COUNT(*) as count FROM analytics WHERE timestamp >= NOW() - INTERVAL \'7 days\''
-  );
+  const weekResult = await query('SELECT COUNT(*) as count FROM analytics WHERE timestamp >= NOW() - INTERVAL \'7 days\'');
   const thisWeek = parseInt(weekResult[0]?.count || '0');
 
+  const monthResult = await query('SELECT COUNT(*) as count FROM analytics WHERE timestamp >= NOW() - INTERVAL \'30 days\'');
+  const thisMonth = parseInt(monthResult[0]?.count || '0');
+
+  // New vs Returning Visitors
+  const returningResult = await query(
+    `SELECT COUNT(*) as count FROM (
+       SELECT visitor_id FROM analytics WHERE visitor_id != '' GROUP BY visitor_id HAVING COUNT(*) > 1
+     ) sub`
+  );
+  const returningCount = parseInt(returningResult[0]?.count || '0');
+  const newCount = Math.max(0, totalVisitors - returningCount);
+
+  // Top Pages
   const topPagesResult = await query(
     'SELECT path, COUNT(*) as count FROM analytics GROUP BY path ORDER BY count DESC LIMIT 10'
   );
 
-  // Fill in missing days
-  const dayMap: Record<string, number> = {};
+  // Top Referrers
+  const topReferrersResult = await query(
+    `SELECT COALESCE(NULLIF(referrer, ''), 'Direct / None') as referrer, COUNT(*) as count
+     FROM analytics
+     GROUP BY referrer
+     ORDER BY count DESC LIMIT 10`
+  );
+
+  // Device Breakdown
+  const deviceResult = await query(
+    `SELECT COALESCE(NULLIF(device_type, ''), 'Desktop') as type, COUNT(*) as count
+     FROM analytics
+     GROUP BY type
+     ORDER BY count DESC`
+  );
+
+  // Browser Breakdown
+  const browserResult = await query(
+    `SELECT COALESCE(NULLIF(browser, ''), 'Unknown') as name, COUNT(*) as count
+     FROM analytics
+     GROUP BY name
+     ORDER BY count DESC LIMIT 8`
+  );
+
+  // Operating System Breakdown
+  const osResult = await query(
+    `SELECT COALESCE(NULLIF(os, ''), 'Unknown') as name, COUNT(*) as count
+     FROM analytics
+     GROUP BY name
+     ORDER BY count DESC LIMIT 8`
+  );
+
+  // Location Breakdown (Country, Region, City)
+  const locationResult = await query(
+    `SELECT COALESCE(NULLIF(country, ''), 'Unknown') as country,
+            COALESCE(NULLIF(region, ''), 'Unknown') as region,
+            COALESCE(NULLIF(city, ''), 'Unknown') as city,
+            COUNT(*) as count
+     FROM analytics
+     GROUP BY country, region, city
+     ORDER BY count DESC LIMIT 15`
+  );
+
+  // Fill in missing daily entries
+  const dayMap: Record<string, { count: number; visitors: number }> = {};
   for (const d of daily) {
-    dayMap[d.date.toISOString().slice(0, 10)] = parseInt(d.count);
+    const key = new Date(d.date).toISOString().slice(0, 10);
+    dayMap[key] = { count: parseInt(d.count || '0'), visitors: parseInt(d.visitors || '0') };
   }
 
-  const fullDaily: { date: string; count: number }[] = [];
+  const fullDaily: { date: string; count: number; visitors: number }[] = [];
   const now = new Date();
   for (let i = 0; i < days; i++) {
     const d = new Date(now);
     d.setDate(d.getDate() - (days - 1) + i);
     const key = d.toISOString().slice(0, 10);
-    fullDaily.push({ date: key, count: dayMap[key] || 0 });
+    fullDaily.push({ date: key, count: dayMap[key]?.count || 0, visitors: dayMap[key]?.visitors || 0 });
   }
+
+  // Filtered & Paginated Visitor Logs
+  let whereClauses: string[] = [];
+  let queryParams: any[] = [];
+  let paramIdx = 1;
+
+  if (search) {
+    whereClauses.push(`(LOWER(path) LIKE $${paramIdx} OR LOWER(visitor_id) LIKE $${paramIdx} OR LOWER(referrer) LIKE $${paramIdx} OR LOWER(country) LIKE $${paramIdx} OR LOWER(city) LIKE $${paramIdx} OR LOWER(browser) LIKE $${paramIdx})`);
+    queryParams.push(`%${search}%`);
+    paramIdx++;
+  }
+  if (filterCountry) {
+    whereClauses.push(`LOWER(country) = $${paramIdx}`);
+    queryParams.push(filterCountry.toLowerCase());
+    paramIdx++;
+  }
+  if (filterDevice) {
+    whereClauses.push(`LOWER(device_type) = $${paramIdx}`);
+    queryParams.push(filterDevice.toLowerCase());
+    paramIdx++;
+  }
+
+  const whereStr = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
+
+  const totalLogsCountRes = await query(`SELECT COUNT(*) as count FROM analytics ${whereStr}`, queryParams);
+  const totalLogs = parseInt(totalLogsCountRes[0]?.count || '0');
+
+  const logsQuery = `
+    SELECT id, path, session_id, visitor_id, referrer, device_type, os, browser, screen_res, language, country, region, city, ip, duration_seconds, timestamp
+    FROM analytics
+    ${whereStr}
+    ORDER BY timestamp DESC
+    LIMIT $${paramIdx} OFFSET $${paramIdx + 1}
+  `;
+  const logsResult = await query(logsQuery, [...queryParams, limit, offset]);
+
+  const visitorLogs = logsResult.map((r: any) => ({
+    id: r.id,
+    path: r.path || '/',
+    sessionId: r.session_id || `SES-${r.id}`,
+    visitorId: r.visitor_id || `VIS-${String(r.id).padStart(6, '0')}`,
+    referrer: r.referrer || 'Direct / None',
+    deviceType: r.device_type || 'Desktop',
+    os: r.os || 'Unknown',
+    browser: r.browser || 'Unknown',
+    screenRes: r.screen_res || 'N/A',
+    language: r.language || 'en-US',
+    country: r.country || 'Unknown',
+    region: r.region || '',
+    city: r.city || '',
+    ip: r.ip ? r.ip.replace(/(\d+)\.(\d+)\.(\d+)\.(\d+)/, '$1.$2.*.*') : '127.0.0.1',
+    durationSeconds: parseInt(r.duration_seconds || '0'),
+    timestamp: r.timestamp,
+  }));
 
   return {
     daily: fullDaily,
     total,
+    totalVisitors,
+    totalSessions,
+    liveVisitors,
     today,
     thisWeek,
+    thisMonth,
+    avgDuration,
+    newVsReturning: { new: newCount, returning: returningCount },
     topPages: topPagesResult.map((r: any) => ({ path: r.path, count: parseInt(r.count) })),
+    topReferrers: topReferrersResult.map((r: any) => ({ referrer: r.referrer, count: parseInt(r.count) })),
+    devices: deviceResult.map((r: any) => ({ type: r.type, count: parseInt(r.count) })),
+    browsers: browserResult.map((r: any) => ({ name: r.name, count: parseInt(r.count) })),
+    operatingSystems: osResult.map((r: any) => ({ name: r.name, count: parseInt(r.count) })),
+    locations: locationResult.map((r: any) => ({ country: r.country, region: r.region, city: r.city, count: parseInt(r.count) })),
+    logs: visitorLogs,
+    pagination: {
+      page,
+      limit,
+      total: totalLogs,
+      totalPages: Math.ceil(totalLogs / limit) || 1,
+    },
   };
+}
+
+export async function exportAnalyticsCSV() {
+  await ensureInitialized();
+  const rows = await query(`
+    SELECT id, timestamp, visitor_id, session_id, path, referrer, device_type, os, browser, country, region, city, duration_seconds
+    FROM analytics
+    ORDER BY timestamp DESC
+    LIMIT 5000
+  `);
+
+  const headers = ['ID', 'Timestamp', 'Visitor ID', 'Session ID', 'Path', 'Referrer', 'Device', 'OS', 'Browser', 'Country', 'Region', 'City', 'Duration (s)'];
+  const csvLines = [headers.join(',')];
+
+  rows.forEach((r: any) => {
+    const line = [
+      r.id,
+      `"${new Date(r.timestamp).toISOString()}"`,
+      `"${r.visitor_id || ''}"`,
+      `"${r.session_id || ''}"`,
+      `"${(r.path || '').replace(/"/g, '""')}"`,
+      `"${(r.referrer || '').replace(/"/g, '""')}"`,
+      `"${r.device_type || ''}"`,
+      `"${r.os || ''}"`,
+      `"${r.browser || ''}"`,
+      `"${r.country || ''}"`,
+      `"${r.region || ''}"`,
+      `"${r.city || ''}"`,
+      r.duration_seconds || 0,
+    ].join(',');
+    csvLines.push(line);
+  });
+
+  return csvLines.join('\n');
 }
 
 // Settings
