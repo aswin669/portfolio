@@ -72,7 +72,7 @@ export default function AnimatedShowcase() {
       const rect = runwayRef.current.getBoundingClientRect();
       const windowHeight = window.innerHeight;
 
-      // Calculate progress (0 to 1) as section runway scrolls through viewport
+      // Calculate progress (0 to 1) as sticky section runway scrolls through viewport
       const totalScrollable = rect.height - windowHeight;
       if (totalScrollable <= 0) return;
 
@@ -119,7 +119,7 @@ export default function AnimatedShowcase() {
     <section
       id="showcase"
       ref={runwayRef}
-      className="relative w-full h-[350vh] bg-[#f5f5f3] dark:bg-[#080808] text-primary transition-colors border-y border-outline-variant/60"
+      className="relative w-full h-[380vh] bg-[#f5f5f3] dark:bg-[#080808] text-primary transition-colors border-y border-outline-variant/60"
     >
       {reducedMotion ? (
         /* Reduced Motion Fallback: Clean Responsive Grid */
@@ -137,10 +137,10 @@ export default function AnimatedShowcase() {
                 onClick={() => setLightboxIndex(index)}
                 className="group cursor-pointer bg-surface border border-outline-variant rounded-xl overflow-hidden shadow-lg transition-transform duration-300 hover:-translate-y-1"
               >
-                <div className="aspect-[16/10] w-full overflow-hidden bg-black">
+                <div className="aspect-[3/4] w-full overflow-hidden bg-black">
                   <img
                     src={item.image_url}
-                    alt={item.title || 'Showcase image'}
+                    alt={item.title || 'Showcase portrait magazine cover'}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
@@ -157,14 +157,14 @@ export default function AnimatedShowcase() {
           </div>
         </div>
       ) : (
-        /* Sticky Viewport Animation Engine (Matching Reference Images 1, 2, 3) */
+        /* Sticky Viewport Animation Engine: DIAGONAL (Bottom-Right ↖ Top-Left) */
         <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between p-6 md:p-10 select-none">
           {/* Top Bar Editorial Header */}
           <div className="w-full max-w-7xl mx-auto flex items-center justify-between z-10 pt-2">
             <div className="flex items-center gap-3">
               <span className="w-6 h-[1px] bg-primary"></span>
               <span className="font-mono-label text-[11px] uppercase tracking-[0.25em] text-secondary font-semibold">
-                EDITORIAL SHOWCASE
+                EDITORIAL VISUALS
               </span>
             </div>
             <span className="font-mono-label text-[11px] uppercase tracking-widest text-secondary font-medium">
@@ -174,38 +174,47 @@ export default function AnimatedShowcase() {
 
           {/* Watermark Background Typography */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden select-none opacity-[0.04]">
-            <span className="font-display-lg text-[14vw] font-black uppercase tracking-tighter whitespace-nowrap">
-              EDITORIAL VISUALS
+            <span className="font-display-lg text-[13vw] font-black uppercase tracking-tighter whitespace-nowrap">
+              EDITORIAL COVER SHOWCASE
             </span>
           </div>
 
-          {/* Main Choreographed Cards Runway */}
+          {/* Main Diagonal Cards Runway (Bottom-Right ↖ Top-Left Trajectory) */}
           <div className="relative w-full max-w-7xl mx-auto flex-1 flex items-center justify-center z-10 my-4">
             {items.map((item, index) => {
               // Calculate delta relative to scroll position
-              // delta = 0 means card is in full central focus
+              // targetProgress for card i
               const targetProgress = N > 1 ? index / (N - 1) : 0;
-              const delta = (scrollProgress - targetProgress) * (N > 1 ? N * 0.85 : 1);
+              const delta = (scrollProgress - targetProgress) * (N > 1 ? N * 0.8 : 1);
 
-              // Position X calculation (vw units)
-              const translateX = -delta * 48; // moves left as user scrolls down
+              // DIAGONAL MOVEMENT VECTOR:
+              // When delta < 0 (entering from bottom-right):
+              // translateX is POSITIVE (+vw), translateY is POSITIVE (+vh)
+              // When delta > 0 (exiting to top-left):
+              // translateX is NEGATIVE (-vw), translateY is NEGATIVE (-vh)
+              const baseDistX = 52; // vw distance
+              const baseDistY = 52; // vh distance
 
-              // Position Y calculation with alternating vertical offset
-              const vertDirection = index % 2 === 0 ? -1 : 1;
-              const translateY = vertDirection * Math.sin(delta * 1.2) * 35;
+              const varX = ((index % 3) - 1) * 8; // slight variation per card
+              const varY = (index % 2 === 0 ? -6 : 6); // slight vertical offset
 
-              // Scale calculation: peak scale (1.06) when centered (delta = 0), shrinking to 0.75 off-center
+              const translateX = -delta * baseDistX + varX;
+              const translateY = -delta * baseDistY + varY;
+
+              // SCALE TRANSITION:
+              // Small (0.58) at bottom-right -> Focal Large (1.12) at center -> Small (0.58) at top-left
               const absDelta = Math.abs(delta);
-              const scale = Math.max(0.72, 1.06 - absDelta * 0.28);
+              const scale = Math.max(0.58, 1.12 - absDelta * 0.36);
 
-              // Rotation calculation: smoothly transitions from positive to negative angle
-              const rotDirection = index % 2 === 0 ? 1 : -1;
-              const rotate = rotDirection * (3.5 - Math.min(6, absDelta * 2.5));
+              // ROTATION TRANSITION:
+              // Dynamic subtle rotation: +3.5° (bottom-right) -> 0° (center) -> -3.5° (top-left)
+              const baseAngle = index % 2 === 0 ? 3.5 : -2.5;
+              const rotate = baseAngle * (1 - delta * 0.8);
 
-              // Z-Index calculation: highest when near focal center
+              // Z-INDEX: Focal central card gets highest priority
               const zIndex = Math.max(1, 50 - Math.round(absDelta * 20));
 
-              // Opacity calculation: fully opaque when near viewport, smoothly fades far offscreen
+              // OPACITY: Fades smoothly when entering/exiting offscreen
               const opacity = Math.max(0, Math.min(1, 1.3 - absDelta * 0.75));
 
               return (
@@ -216,49 +225,55 @@ export default function AnimatedShowcase() {
                     position: 'absolute',
                     left: '50%',
                     top: '50%',
-                    width: 'clamp(280px, 32vw, 520px)',
-                    transform: `translate3d(calc(-50% + ${translateX}vw), calc(-50% + ${translateY}px), 0) scale(${scale.toFixed(3)}) rotate(${rotate.toFixed(2)}deg)`,
+                    width: 'clamp(240px, 24vw, 380px)',
+                    aspectRatio: '3/4',
+                    transform: `translate3d(calc(-50% + ${translateX}vw), calc(-50% + ${translateY}vh), 0) scale(${scale.toFixed(3)}) rotate(${rotate.toFixed(2)}deg)`,
                     zIndex,
                     opacity,
                     willChange: 'transform, opacity',
                   }}
-                  className="group cursor-pointer bg-surface border border-outline-variant/80 rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 hover:shadow-primary/20 hover:border-primary/50"
+                  className="group cursor-pointer bg-surface border-2 border-white/90 dark:border-white/20 rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 hover:shadow-primary/30 hover:border-primary/60 flex flex-col justify-between"
                 >
-                  {/* Magazine Cover / Landscape Image Card Container */}
-                  <div className="aspect-[16/10] w-full overflow-hidden bg-black relative">
+                  {/* Full Portrait Magazine Cover Container */}
+                  <div className="relative w-full h-full bg-black overflow-hidden flex flex-col justify-between p-4">
                     <img
                       src={item.image_url}
-                      alt={item.title || item.category || 'Showcase visual'}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      alt={item.title || item.category || 'Showcase portrait magazine cover'}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent opacity-50 group-hover:opacity-30 transition-opacity"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 opacity-60 group-hover:opacity-40 transition-opacity"></div>
 
-                    {/* Category Tag Overlay */}
-                    {item.category && (
-                      <div className="absolute top-3 right-3 z-10">
-                        <span className="font-mono-label text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 bg-black/60 backdrop-blur-md text-white border border-white/20 rounded-full">
+                    {/* Top Tag Overlay */}
+                    <div className="relative z-10 flex items-center justify-between">
+                      {item.category ? (
+                        <span className="font-mono-label text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 bg-black/60 backdrop-blur-md text-white border border-white/20 rounded-full">
                           {item.category}
                         </span>
+                      ) : (
+                        <span></span>
+                      )}
+                      <span className="font-mono-label text-[10px] text-white/70 font-semibold uppercase tracking-wider">
+                        ISSUE #{index + 1}
+                      </span>
+                    </div>
+
+                    {/* Bottom Metadata Overlay */}
+                    {(item.title || item.subtitle) && (
+                      <div className="relative z-10 pt-4 border-t border-white/20">
+                        {item.title && (
+                          <h4 className="font-display-lg text-lg sm:text-xl font-bold text-white tracking-tight leading-tight uppercase mb-0.5 truncate">
+                            {item.title}
+                          </h4>
+                        )}
+                        {item.subtitle && (
+                          <p className="font-mono-label text-[11px] text-white/80 line-clamp-1 uppercase tracking-wider">
+                            {item.subtitle}
+                          </p>
+                        )}
                       </div>
                     )}
                   </div>
-
-                  {/* Card Bottom Meta Bar */}
-                  {(item.title || item.subtitle) && (
-                    <div className="p-4 bg-surface-container-low border-t border-outline-variant flex flex-col gap-1">
-                      {item.title && (
-                        <h4 className="font-display-lg text-sm sm:text-base font-bold text-primary truncate group-hover:text-primary transition-colors">
-                          {item.title}
-                        </h4>
-                      )}
-                      {item.subtitle && (
-                        <p className="font-body-md text-xs text-secondary line-clamp-1">
-                          {item.subtitle}
-                        </p>
-                      )}
-                    </div>
-                  )}
                 </div>
               );
             })}
