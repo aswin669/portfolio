@@ -36,7 +36,7 @@ export default function CursorTrail() {
     let hasMoved = false;
 
     // Queue of trail points for spring / lerp physics
-    const POINT_COUNT = 28;
+    const POINT_COUNT = 16;
     const points: TrailPoint[] = Array.from({ length: POINT_COUNT }, () => ({
       x: -100,
       y: -100,
@@ -86,18 +86,18 @@ export default function CursorTrail() {
         } else {
           idleFrames++;
           if (idleFrames > 8) {
-            opacity = Math.max(0, opacity - 0.035);
+            opacity = Math.max(0, opacity - 0.04);
           }
         }
 
         // Head point lerp towards target mouse position
-        points[0].x += (target.x - points[0].x) * 0.5;
-        points[0].y += (target.y - points[0].y) * 0.5;
+        points[0].x += (target.x - points[0].x) * 0.55;
+        points[0].y += (target.y - points[0].y) * 0.55;
 
         // Subsequent points follow leader with dynamic easing
         for (let i = 1; i < POINT_COUNT; i++) {
           const leader = points[i - 1];
-          const ease = 0.38 + (i / POINT_COUNT) * 0.14;
+          const ease = 0.42 + (i / POINT_COUNT) * 0.16;
           points[i].x += (leader.x - points[i].x) * ease;
           points[i].y += (leader.y - points[i].y) * ease;
         }
@@ -116,7 +116,7 @@ export default function CursorTrail() {
             const p1 = points[i];
             const p2 = points[i + 1];
             const progress = 1 - i / (POINT_COUNT - 1);
-            const widthScale = 0.5 + Math.pow(progress, 1.2) * 2.2;
+            const widthScale = 0.3 + Math.pow(progress, 1.2) * 1.2;
             const alphaScale = Math.pow(progress, 0.65) * opacity * (isDark ? 0.8 : 0.95);
 
             ctx.beginPath();
@@ -129,7 +129,7 @@ export default function CursorTrail() {
 
           // Crisp leading cursor dot at head point
           ctx.beginPath();
-          ctx.arc(points[0].x, points[0].y, 2.5, 0, Math.PI * 2);
+          ctx.arc(points[0].x, points[0].y, 1.8, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(${rgb}, ${opacity * (isDark ? 0.9 : 1.0)})`;
           ctx.fill();
 
