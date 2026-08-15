@@ -10,6 +10,18 @@ const emptyForm = {
   liveUrl: '', adminUrl: '', demoLinks: '[]', architecture: '', architectureFlow: '', features: '', journey: '', gallery: '',
 };
 
+const getGalleryList = (val: any): string[] => {
+  if (Array.isArray(val)) return val.filter((x) => typeof x === 'string' && x.trim());
+  if (typeof val === 'string') return val.split('\n').map((u) => u.trim()).filter(Boolean);
+  return [];
+};
+
+const getGalleryString = (val: any): string => {
+  if (typeof val === 'string') return val;
+  if (Array.isArray(val)) return val.join('\n');
+  return '';
+};
+
 export default function AdminProjectDetail() {
   const { slug } = useParams<{ slug: string }>();
   const router = useRouter();
@@ -39,7 +51,7 @@ export default function AdminProjectDetail() {
               content: data.content || '',
               architecture: data.architecture || '',
               tags: Array.isArray(data.tags) ? data.tags : [],
-              gallery: Array.isArray(data.gallery) ? data.gallery.join('\n') : (typeof data.gallery === 'string' ? data.gallery : ''),
+              gallery: getGalleryString(data.gallery),
               demoLinks: typeof data.demoLinks === 'object' ? JSON.stringify(data.demoLinks, null, 2) : (data.demoLinks || '[]'),
               architectureFlow: typeof data.architectureFlow === 'object' ? JSON.stringify(data.architectureFlow, null, 2) : (data.architectureFlow || ''),
               features: typeof data.features === 'object' ? JSON.stringify(data.features, null, 2) : (data.features || ''),
@@ -111,7 +123,7 @@ export default function AdminProjectDetail() {
       ...form,
       content,
       status: action === 'publish' ? 'LIVE' : 'DRAFT',
-      gallery: (form.gallery || '').split('\n').map((u: string) => u.trim()).filter(Boolean),
+      gallery: getGalleryList(form.gallery),
     };
     const targetId = projectId || form?.id || slug;
     try {
@@ -135,7 +147,11 @@ export default function AdminProjectDetail() {
         const savedData = await res.json();
         if (savedData && savedData.id) {
           setProjectId(savedData.id);
-          setForm((prev: any) => ({ ...prev, ...savedData }));
+          setForm((prev: any) => ({
+            ...prev,
+            ...savedData,
+            gallery: getGalleryString(savedData.gallery),
+          }));
         }
         setLastSaved(new Date().toLocaleString());
         const toast = document.getElementById('saveToast');
@@ -306,11 +322,11 @@ export default function AdminProjectDetail() {
           <section className="space-y-4">
             <label className="font-mono-label text-mono-label text-secondary uppercase block">Gallery Images</label>
             <div className="grid grid-cols-3 gap-2">
-              {(form.gallery || '').split('\n').filter(Boolean).map((url: string, i: number) => (
+              {getGalleryList(form.gallery).map((url: string, i: number) => (
                 <div key={i} className="aspect-square bg-surface-container-low border border-on-background overflow-hidden relative group">
                   <img className="w-full h-full object-cover" src={url} alt="" />
                   <button type="button" onClick={() => {
-                    const arr = (form.gallery || '').split('\n').filter(Boolean);
+                    const arr = getGalleryList(form.gallery);
                     arr.splice(i, 1);
                     setForm({ ...form, gallery: arr.join('\n') });
                   }} className="absolute top-1 right-1 bg-on-background text-on-primary w-5 h-5 flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">&times;</button>
@@ -325,7 +341,7 @@ export default function AdminProjectDetail() {
                 onChange={(e) => {
                   const val = e.target.value;
                   if (val) {
-                    const arr = (form.gallery || '').split('\n').filter(Boolean);
+                    const arr = getGalleryList(form.gallery);
                     arr.push(val);
                     setForm({ ...form, gallery: arr.join('\n') });
                     e.target.value = '';
@@ -336,7 +352,7 @@ export default function AdminProjectDetail() {
                     e.preventDefault();
                     const input = e.target as HTMLInputElement;
                     if (input.value.trim()) {
-                      const arr = (form.gallery || '').split('\n').filter(Boolean);
+                      const arr = getGalleryList(form.gallery);
                       arr.push(input.value.trim());
                       setForm({ ...form, gallery: arr.join('\n') });
                       input.value = '';
@@ -355,7 +371,7 @@ export default function AdminProjectDetail() {
                   const res = await fetch('/api/upload', { method: 'POST', body: fd });
                   const data = await res.json();
                   if (data.url) {
-                    const arr = (form.gallery || '').split('\n').filter(Boolean);
+                    const arr = getGalleryList(form.gallery);
                     arr.push(data.url);
                     setForm({ ...form, gallery: arr.join('\n') });
                   }

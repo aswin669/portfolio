@@ -28,8 +28,8 @@ export default function AdminExperience() {
 
   const save = async () => {
     if (!form.title.trim()) return;
-    setSaving(true);
-    const payload = { ...form, highlights: form.highlights.split('\n').map((l: string) => l.trim()).filter(Boolean) };
+    const highlightsList = typeof form.highlights === 'string' ? form.highlights.split('\n') : (Array.isArray(form.highlights) ? form.highlights : []);
+    const payload = { ...form, highlights: highlightsList.map((l: string) => String(l).trim()).filter(Boolean) };
     try {
       if (editing._new) {
         await fetch('/api/experience', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
