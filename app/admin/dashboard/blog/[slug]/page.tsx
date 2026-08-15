@@ -26,12 +26,20 @@ export default function AdminBlogEditor() {
       fetch(`/api/blog/${slug}`)
         .then((r) => r.json())
         .then((data) => {
-          if (data) setForm(data);
+          if (data && (data.id || data.slug)) setForm(data);
           setLoading(false);
         })
         .catch(() => { setError('Failed to load post'); setLoading(false); });
     }
   }, [slug, isNew]);
+
+  useEffect(() => {
+    if (contentRef.current && form.content !== undefined) {
+      if (contentRef.current.innerHTML !== form.content) {
+        contentRef.current.innerHTML = form.content || '';
+      }
+    }
+  }, [loading, form.content]);
 
   const exec = (cmd: string, val?: string) => {
     document.execCommand(cmd, false, val);
@@ -65,25 +73,42 @@ export default function AdminBlogEditor() {
   const addTag = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && tagInput.trim()) {
       e.preventDefault();
-      setForm({ ...form, tags: [...form.tags, tagInput.trim().toUpperCase()] });
+      setForm({ ...form, tags: [...(form.tags || []), tagInput.trim().toUpperCase()] });
       setTagInput('');
     }
   };
 
   const handleSave = async () => {
     setSaving(true);
-    const url = isNew ? '/api/blog' : `/api/blog/${form.id}`;
+    const content = contentRef.current ? contentRef.current.innerHTML : (form.content || '');
+    const payload = { ...form, content };
+    const targetId = form.id || slug;
+    const url = isNew ? '/api/blog' : `/api/blog/${targetId}`;
     const method = isNew ? 'POST' : 'PUT';
-    await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
-    setSaving(false);
-    setLastSaved(new Date().toLocaleString());
-    const toast = document.getElementById('saveToast');
-    if (toast) {
-      toast.classList.remove('translate-y-32');
-      toast.classList.add('translate-y-0');
-      setTimeout(() => { toast.classList.remove('translate-y-0'); toast.classList.add('translate-y-32'); }, 3000);
+
+    try {
+      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        alert(`Save failed: ${errData.error || res.statusText}`);
+      } else {
+        const saved = await res.json();
+        if (saved && saved.id) setForm((prev: any) => ({ ...prev, ...saved }));
+        setLastSaved(new Date().toLocaleString());
+        const toast = document.getElementById('saveToast');
+        if (toast) {
+          toast.classList.remove('translate-y-32');
+          toast.classList.add('translate-y-0');
+          setTimeout(() => { toast.classList.remove('translate-y-0'); toast.classList.add('translate-y-32'); }, 3000);
+        }
+        if (isNew) router.push('/admin/dashboard/blog');
+      }
+    } catch (err) {
+      console.error('Save error:', err);
+      alert('Save failed due to network or server error.');
+    } finally {
+      setSaving(false);
     }
-    if (isNew) router.push('/admin/dashboard/blog');
   };
 
   if (loading) return <div className="p-12 text-center font-mono-label text-mono-label text-secondary">Loading...</div>;
