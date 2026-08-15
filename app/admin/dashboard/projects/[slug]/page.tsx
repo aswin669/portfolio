@@ -27,15 +27,41 @@ export default function AdminProjectDetail() {
       fetch(`/api/projects/${slug}`)
         .then((r) => r.json())
         .then((data) => {
-          if (data.id) {
-            setForm({ ...data, gallery: Array.isArray(data.gallery) ? data.gallery.join('\n') : '' });
-            setProjectId(data.id);
+          if (data && (data.id || data.slug)) {
+            setForm({
+              ...emptyForm,
+              ...data,
+              name: data.name || data.title || '',
+              tagline: data.tagline || data.description || '',
+              stack: data.stack || data.tech || '',
+              problem: data.problem || '',
+              solution: data.solution || '',
+              content: data.content || '',
+              architecture: data.architecture || '',
+              tags: Array.isArray(data.tags) ? data.tags : [],
+              gallery: Array.isArray(data.gallery) ? data.gallery.join('\n') : (typeof data.gallery === 'string' ? data.gallery : ''),
+              demoLinks: typeof data.demoLinks === 'object' ? JSON.stringify(data.demoLinks, null, 2) : (data.demoLinks || '[]'),
+              architectureFlow: typeof data.architectureFlow === 'object' ? JSON.stringify(data.architectureFlow, null, 2) : (data.architectureFlow || ''),
+              features: typeof data.features === 'object' ? JSON.stringify(data.features, null, 2) : (data.features || ''),
+              journey: typeof data.journey === 'object' ? JSON.stringify(data.journey, null, 2) : (data.journey || ''),
+            });
+            if (data.id) setProjectId(data.id);
           }
           setLoading(false);
         })
         .catch(() => setLoading(false));
     }
   }, [slug, isNew]);
+
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (contentRef.current && form.content !== undefined) {
+      if (contentRef.current.innerHTML !== form.content) {
+        contentRef.current.innerHTML = form.content || '';
+      }
+    }
+  }, [loading, form.content]);
 
   const addTag = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && tagInput.trim()) {
@@ -46,7 +72,6 @@ export default function AdminProjectDetail() {
   };
 
   const removeTag = (t: string) => setForm({ ...form, tags: (form.tags || []).filter((x: string) => x !== t) });
-  const contentRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -81,35 +106,52 @@ export default function AdminProjectDetail() {
 
   const handleSave = async (action: 'draft' | 'publish') => {
     setSaving(true);
+    const content = contentRef.current ? contentRef.current.innerHTML : (form.content || '');
     const payload = {
       ...form,
+      content,
       status: action === 'publish' ? 'LIVE' : 'DRAFT',
       gallery: (form.gallery || '').split('\n').map((u: string) => u.trim()).filter(Boolean),
     };
-    const targetId = projectId || form?.id;
-    if (isNew) {
-      await fetch('/api/projects', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-    } else if (targetId) {
-      await fetch(`/api/projects/${targetId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-    }
-    setSaving(false);
-    setLastSaved(new Date().toLocaleString());
-    const toast = document.getElementById('saveToast');
-    if (toast) {
-      toast.classList.remove('translate-y-32');
-      toast.classList.add('translate-y-0');
-      setTimeout(() => {
-        toast.classList.remove('translate-y-0');
-        toast.classList.add('translate-y-32');
-      }, 3000);
+    const targetId = projectId || form?.id || slug;
+    try {
+      const res = isNew
+        ? await fetch('/api/projects', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          })
+        : await fetch(`/api/projects/${targetId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        alert(`Save failed: ${errData.error || res.statusText}`);
+      } else {
+        const savedData = await res.json();
+        if (savedData && savedData.id) {
+          setProjectId(savedData.id);
+          setForm((prev: any) => ({ ...prev, ...savedData }));
+        }
+        setLastSaved(new Date().toLocaleString());
+        const toast = document.getElementById('saveToast');
+        if (toast) {
+          toast.classList.remove('translate-y-32');
+          toast.classList.add('translate-y-0');
+          setTimeout(() => {
+            toast.classList.remove('translate-y-0');
+            toast.classList.add('translate-y-32');
+          }, 3000);
+        }
+      }
+    } catch (err) {
+      console.error('Save error:', err);
+      alert('Save failed due to network or server error.');
+    } finally {
+      setSaving(false);
     }
   };
 

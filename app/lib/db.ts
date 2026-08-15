@@ -57,6 +57,7 @@ async function initTables() {
     ALTER TABLE projects ADD COLUMN IF NOT EXISTS journey TEXT DEFAULT '';
     ALTER TABLE projects ADD COLUMN IF NOT EXISTS gallery TEXT[] DEFAULT '{}';
     ALTER TABLE projects ADD COLUMN IF NOT EXISTS architecture_flow TEXT DEFAULT '';
+    ALTER TABLE projects ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}';
     CREATE TABLE IF NOT EXISTS blog_posts (
       id SERIAL PRIMARY KEY,
       slug VARCHAR(255) UNIQUE,
@@ -265,27 +266,65 @@ export async function getProject(idOrSlug: string | number) {
 
 export async function createProject(data: any) {
   await ensureInitialized();
-  const { slug, title, name, description, tagline, content, problem, solution, category, stack, tech, status, image, featured, noIndex, canonical, metaTitle, metaDesc, year, type: ptype, caseNo, liveUrl, adminUrl, demoLinks, architecture, features, journey, gallery, architectureFlow } = data;
+  const { slug, title, name, description, tagline, content, problem, solution, category, stack, tech, status, image, featured, noIndex, canonical, metaTitle, metaDesc, year, type: ptype, caseNo, liveUrl, adminUrl, demoLinks, architecture, features, journey, gallery, architectureFlow, tags } = data;
   const rows = await query(
-    `INSERT INTO projects (slug, title, name, description, tagline, content, problem, solution, category, stack, tech, status, image, featured, no_index, canonical, meta_title, meta_desc, year, type, case_no, live_url, admin_url, demo_links, architecture, features, journey, gallery, architecture_flow)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29) RETURNING *`,
-    [slug||'', title||'', name||title||'', description||'', tagline||'', content||'', problem||'', solution||'', category||'', stack||'', tech||stack||'', status||'Draft', image||'', featured||false, noIndex||false, canonical||false, metaTitle||'', metaDesc||'', year||'', ptype||'', caseNo||'', liveUrl||'', adminUrl||'', demoLinks||'[]', architecture||'', features||'', journey||'', gallery||[], architectureFlow||'']
+    `INSERT INTO projects (slug, title, name, description, tagline, content, problem, solution, category, stack, tech, status, image, featured, no_index, canonical, meta_title, meta_desc, year, type, case_no, live_url, admin_url, demo_links, architecture, features, journey, gallery, architecture_flow, tags)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30) RETURNING *`,
+    [slug||'', title||'', name||title||'', description||'', tagline||'', content||'', problem||'', solution||'', category||'', stack||'', tech||stack||'', status||'Draft', image||'', featured||false, noIndex||false, canonical||false, metaTitle||'', metaDesc||'', year||'', ptype||'', caseNo||'', liveUrl||'', adminUrl||'', demoLinks||'[]', architecture||'', features||'', journey||'', gallery||[], architectureFlow||'', tags||[]]
   );
   return toCamelCase(rows[0]);
 }
 
 export async function updateProject(id: number, data: any) {
   await ensureInitialized();
+  const allowedKeys: Record<string, string> = {
+    slug: 'slug',
+    title: 'title',
+    name: 'name',
+    description: 'description',
+    tagline: 'tagline',
+    content: 'content',
+    problem: 'problem',
+    solution: 'solution',
+    category: 'category',
+    stack: 'stack',
+    tech: 'tech',
+    status: 'status',
+    image: 'image',
+    featured: 'featured',
+    noIndex: 'no_index',
+    canonical: 'canonical',
+    metaTitle: 'meta_title',
+    metaDesc: 'meta_desc',
+    year: 'year',
+    type: 'type',
+    caseNo: 'case_no',
+    liveUrl: 'live_url',
+    adminUrl: 'admin_url',
+    demoLinks: 'demo_links',
+    architecture: 'architecture',
+    features: 'features',
+    journey: 'journey',
+    gallery: 'gallery',
+    architectureFlow: 'architecture_flow',
+    tags: 'tags',
+  };
+
   const fields: string[] = [];
   const values: any[] = [];
   let idx = 1;
+
   for (const [key, val] of Object.entries(data)) {
-    const dbKey = key.replace(/([A-Z])/g, (_, c) => `_${c.toLowerCase()}`);
+    if (['id', 'createdAt', 'updatedAt', 'created_at', 'updated_at'].includes(key)) {
+      continue;
+    }
+    const dbKey = allowedKeys[key] || key.replace(/([A-Z])/g, (_, c) => `_${c.toLowerCase()}`);
     fields.push(`${dbKey} = $${idx++}`);
     values.push(val);
   }
+
   if (!fields.length) return getProject(id);
-  fields.push(`updated_at = NOW()`);
+  fields.push('updated_at = NOW()');
   values.push(id);
   const rows = await query(
     `UPDATE projects SET ${fields.join(', ')} WHERE id = $${idx} RETURNING *`,
@@ -333,6 +372,9 @@ export async function updateBlogPost(id: number, data: any) {
   const values: any[] = [];
   let idx = 1;
   for (const [key, val] of Object.entries(data)) {
+    if (['id', 'createdAt', 'updatedAt', 'created_at', 'updated_at'].includes(key)) {
+      continue;
+    }
     if (key === 'tags' && Array.isArray(val)) {
       fields.push(`tags = $${idx++}`);
       values.push(val);
@@ -343,7 +385,7 @@ export async function updateBlogPost(id: number, data: any) {
     }
   }
   if (!fields.length) return getBlogPost(id);
-  fields.push(`updated_at = NOW()`);
+  fields.push('updated_at = NOW()');
   values.push(id);
   const rows = await query(
     `UPDATE blog_posts SET ${fields.join(', ')} WHERE id = $${idx} RETURNING *`,
