@@ -163,6 +163,18 @@ async function initTables() {
       request_id VARCHAR(255) DEFAULT '',
       created_at TIMESTAMP DEFAULT NOW()
     );
+    CREATE TABLE IF NOT EXISTS showcase_items (
+      id SERIAL PRIMARY KEY,
+      title VARCHAR(255) DEFAULT '',
+      subtitle TEXT DEFAULT '',
+      category VARCHAR(255) DEFAULT '',
+      description TEXT DEFAULT '',
+      image_url VARCHAR(500) NOT NULL,
+      display_order INTEGER DEFAULT 0,
+      active BOOLEAN DEFAULT TRUE,
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW()
+    );
   `);
 }
 
@@ -938,5 +950,109 @@ export async function getSetting(key: string) {
   const rows = await query('SELECT value FROM settings WHERE key = $1', [key]);
   return rows.length ? rows[0].value : null;
 }
+
+// Showcase Items
+export async function getAllShowcaseItems() {
+  await ensureInitialized();
+  try {
+    return await query('SELECT * FROM showcase_items ORDER BY display_order ASC, id ASC');
+  } catch {
+    return [];
+  }
+}
+
+export async function getPublicShowcaseItems() {
+  await ensureInitialized();
+  try {
+    return await query('SELECT * FROM showcase_items WHERE active = true ORDER BY display_order ASC, id ASC');
+  } catch {
+    return [];
+  }
+}
+
+export async function getShowcaseItemById(id: number) {
+  await ensureInitialized();
+  try {
+    const rows = await query('SELECT * FROM showcase_items WHERE id = $1', [id]);
+    return rows.length ? rows[0] : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function createShowcaseItem(data: {
+  title?: string;
+  subtitle?: string;
+  category?: string;
+  description?: string;
+  image_url: string;
+  display_order?: number;
+  active?: boolean;
+}) {
+  await ensureInitialized();
+  const rows = await query(
+    `INSERT INTO showcase_items (title, subtitle, category, description, image_url, display_order, active)
+     VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+    [
+      data.title || '',
+      data.subtitle || '',
+      data.category || '',
+      data.description || '',
+      data.image_url,
+      data.display_order ?? 0,
+      data.active ?? true,
+    ]
+  );
+  return rows[0];
+}
+
+export async function updateShowcaseItem(
+  id: number,
+  data: {
+    title?: string;
+    subtitle?: string;
+    category?: string;
+    description?: string;
+    image_url?: string;
+    display_order?: number;
+    active?: boolean;
+  }
+) {
+  await ensureInitialized();
+  const current = await getShowcaseItemById(id);
+  if (!current) throw new Error('Showcase item not found');
+
+  const rows = await query(
+    `UPDATE showcase_items
+     SET title = $1, subtitle = $2, category = $3, description = $4, image_url = $5, display_order = $6, active = $7, updated_at = NOW()
+     WHERE id = $8 RETURNING *`,
+    [
+      data.title !== undefined ? data.title : current.title,
+      data.subtitle !== undefined ? data.subtitle : current.subtitle,
+      data.category !== undefined ? data.category : current.category,
+      data.description !== undefined ? data.description : current.description,
+      data.image_url !== undefined ? data.image_url : current.image_url,
+      data.display_order !== undefined ? data.display_order : current.display_order,
+      data.active !== undefined ? data.active : current.active,
+      id,
+    ]
+  );
+  return rows[0];
+}
+
+export async function deleteShowcaseItem(id: number) {
+  await ensureInitialized();
+  await query('DELETE FROM showcase_items WHERE id = $1', [id]);
+  return { success: true };
+}
+
+export async function reorderShowcaseItems(orderedIds: number[]) {
+  await ensureInitialized();
+  for (let i = 0; i < orderedIds.length; i++) {
+    await query('UPDATE showcase_items SET display_order = $1 WHERE id = $2', [i, orderedIds[i]]);
+  }
+  return { success: true };
+}
+
 
 

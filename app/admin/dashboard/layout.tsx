@@ -14,6 +14,7 @@ const navItems = [
   { href: '/admin/dashboard/media', icon: 'photo_library', label: 'Media' },
   { href: '/admin/dashboard/testimonials', icon: 'format_quote', label: 'Testimonials' },
   { href: '/admin/dashboard/experience', icon: 'work_history', label: 'Experience' },
+  { href: '/admin/dashboard/showcase', icon: 'collections', label: 'Animated Showcase' },
   { href: '/admin/dashboard/contacts', icon: 'mail', label: 'Contacts' },
   { href: '/admin/dashboard/settings', icon: 'settings', label: 'Settings' },
 ];
