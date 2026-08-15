@@ -1,12 +1,208 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
+
+function LandscapeImage({
+  src,
+  alt = '',
+  className = '',
+  containerClassName = '',
+  onClick,
+}: {
+  src: string;
+  alt?: string;
+  className?: string;
+  containerClassName?: string;
+  onClick?: () => void;
+}) {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  return (
+    <div
+      onClick={onClick}
+      className={`relative w-full aspect-video bg-neutral-950 border border-outline-variant overflow-hidden flex items-center justify-center rounded-xs transition-all ${
+        onClick ? 'cursor-pointer group hover:border-primary' : ''
+      } ${containerClassName}`}
+    >
+      {loading && !error && (
+        <div className="absolute inset-0 bg-surface-container-highest animate-pulse flex flex-col items-center justify-center gap-2">
+          <span className="material-symbols-outlined text-3xl text-secondary opacity-40 animate-spin">progress_activity</span>
+          <span className="font-mono-label text-[10px] text-secondary opacity-50 uppercase">Loading image...</span>
+        </div>
+      )}
+      {error ? (
+        <div className="flex flex-col items-center justify-center text-secondary opacity-40 p-4 text-center gap-1">
+          <span className="material-symbols-outlined text-4xl">broken_image</span>
+          <span className="font-mono-label text-[11px] uppercase tracking-wider">Image Unavailable</span>
+        </div>
+      ) : (
+        <img
+          src={src}
+          alt={alt}
+          onLoad={() => setLoading(false)}
+          onError={() => { setLoading(false); setError(true); }}
+          className={`w-full h-full object-contain transition-all duration-500 ${
+            loading ? 'opacity-0' : 'opacity-100 group-hover:scale-[1.02]'
+          } ${className}`}
+        />
+      )}
+      {onClick && !loading && !error && (
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2">
+          <span className="material-symbols-outlined text-white text-3xl drop-shadow-md">fullscreen</span>
+          <span className="font-mono-label text-xs text-white uppercase tracking-widest bg-black/60 px-3 py-1 border border-white/20">Expand View</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ImageLightbox({
+  images,
+  selectedIndex,
+  onClose,
+  onNavigate,
+}: {
+  images: string[];
+  selectedIndex: number;
+  onClose: () => void;
+  onNavigate: (index: number) => void;
+}) {
+  const [imgLoading, setImgLoading] = useState(true);
+  const [imgError, setImgError] = useState(false);
+
+  const total = images.length;
+  const currentUrl = images[selectedIndex];
+
+  const handlePrev = useCallback(() => {
+    if (total > 1) onNavigate((selectedIndex - 1 + total) % total);
+  }, [total, selectedIndex, onNavigate]);
+
+  const handleNext = useCallback(() => {
+    if (total > 1) onNavigate((selectedIndex + 1) % total);
+  }, [total, selectedIndex, onNavigate]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowLeft') handlePrev();
+      if (e.key === 'ArrowRight') handleNext();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [onClose, handlePrev, handleNext]);
+
+  useEffect(() => {
+    setImgLoading(true);
+    setImgError(false);
+  }, [selectedIndex]);
+
+  if (selectedIndex < 0 || selectedIndex >= total || !currentUrl) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col justify-between p-4 md:p-6 select-none animate-fade-in"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      {/* Top Bar */}
+      <div className="flex justify-between items-center z-20 text-white pb-3 border-b border-white/10 max-w-7xl mx-auto w-full">
+        <div className="font-mono-label text-xs uppercase tracking-widest text-secondary flex items-center gap-2">
+          <span className="material-symbols-outlined text-base text-primary">photo_library</span>
+          <span>FULLSCREEN VIEWER</span>
+          <span className="opacity-40">//</span>
+          <span className="text-white">IMAGE {selectedIndex + 1} OF {total}</span>
+        </div>
+        <button
+          onClick={onClose}
+          className="bg-white/10 hover:bg-primary hover:text-black text-white p-2 rounded-full transition-colors flex items-center justify-center"
+          title="Close (Esc)"
+        >
+          <span className="material-symbols-outlined text-2xl">close</span>
+        </button>
+      </div>
+
+      {/* Center Image Stage */}
+      <div className="relative flex-1 flex items-center justify-center w-full h-full max-h-[80vh] my-auto overflow-hidden py-2">
+        {total > 1 && (
+          <button
+            onClick={handlePrev}
+            className="absolute left-2 md:left-6 z-30 bg-black/75 hover:bg-primary hover:text-black text-white p-3 md:p-4 rounded-full border border-white/20 transition-all flex items-center justify-center shadow-2xl"
+            title="Previous (Left Arrow)"
+          >
+            <span className="material-symbols-outlined text-2xl md:text-3xl">chevron_left</span>
+          </button>
+        )}
+
+        <div className="relative max-w-full max-h-full flex items-center justify-center p-2">
+          {imgLoading && !imgError && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+              <span className="material-symbols-outlined text-4xl text-primary animate-spin">progress_activity</span>
+              <span className="font-mono-label text-xs text-white/50 uppercase">Loading full image...</span>
+            </div>
+          )}
+          {imgError ? (
+            <div className="flex flex-col items-center justify-center text-white/50 p-8 text-center gap-2">
+              <span className="material-symbols-outlined text-5xl text-error">broken_image</span>
+              <p className="font-mono-label text-sm uppercase tracking-wider">Failed to load high-res image</p>
+            </div>
+          ) : (
+            <img
+              src={currentUrl}
+              alt=""
+              onLoad={() => setImgLoading(false)}
+              onError={() => { setImgLoading(false); setImgError(true); }}
+              className={`max-w-full max-h-[76vh] md:max-h-[80vh] object-contain transition-all duration-300 drop-shadow-2xl ${
+                imgLoading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
+              }`}
+            />
+          )}
+        </div>
+
+        {total > 1 && (
+          <button
+            onClick={handleNext}
+            className="absolute right-2 md:right-6 z-30 bg-black/75 hover:bg-primary hover:text-black text-white p-3 md:p-4 rounded-full border border-white/20 transition-all flex items-center justify-center shadow-2xl"
+            title="Next (Right Arrow)"
+          >
+            <span className="material-symbols-outlined text-2xl md:text-3xl">chevron_right</span>
+          </button>
+        )}
+      </div>
+
+      {/* Bottom Thumbnails */}
+      {total > 1 && (
+        <div className="z-20 pt-3 border-t border-white/10 overflow-x-auto flex justify-center items-center gap-2 max-w-5xl mx-auto w-full px-2 scrollbar-none">
+          {images.map((url, idx) => (
+            <button
+              key={idx}
+              onClick={() => onNavigate(idx)}
+              className={`relative aspect-video w-16 md:w-24 bg-neutral-950 border overflow-hidden transition-all rounded-xs flex-shrink-0 ${
+                idx === selectedIndex
+                  ? 'border-primary scale-105 ring-2 ring-primary/50 opacity-100'
+                  : 'border-white/20 opacity-40 hover:opacity-100'
+              }`}
+            >
+              <img src={url} alt="" className="w-full h-full object-contain" />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function ProjectDetail() {
   const { slug } = useParams<{ slug: string }>();
   const [project, setProject] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   useEffect(() => {
     fetch(`/api/projects/${slug}`)
@@ -35,7 +231,7 @@ export default function ProjectDetail() {
     }
   }, [loading, project]);
 
-  if (loading) return <main className="pt-32 max-w-container-max mx-auto px-gutter"><p className="font-mono-label">Loading...</p></main>;
+  if (loading) return <main className="pt-32 max-w-container-max mx-auto px-gutter"><p className="font-mono-label">Loading project...</p></main>;
   if (!project || project.error) return <main className="pt-32 max-w-container-max mx-auto px-gutter"><p className="font-mono-label text-error">Project not found</p></main>;
 
   let features: any[] = [];
@@ -47,7 +243,25 @@ export default function ProjectDetail() {
   let archFlow: any[] = [];
   try { if (project.architectureFlow) archFlow = JSON.parse(project.architectureFlow); } catch {}
 
-  const gallery: string[] = Array.isArray(project.gallery) ? project.gallery : [];
+  // Consolidate all uploaded project images (Hero image + Gallery images) dynamically
+  const rawGallery: string[] = Array.isArray(project.gallery)
+    ? project.gallery
+    : typeof project.gallery === 'string'
+    ? project.gallery.split('\n').map((s: string) => s.trim()).filter(Boolean)
+    : [];
+
+  const allImages: string[] = [];
+  if (project.image && typeof project.image === 'string' && project.image.trim()) {
+    allImages.push(project.image.trim());
+  }
+  rawGallery.forEach((url: string) => {
+    if (url && typeof url === 'string' && url.trim() && !allImages.includes(url.trim())) {
+      allImages.push(url.trim());
+    }
+  });
+
+  const heroImage = allImages.length > 0 ? allImages[0] : null;
+  const galleryImages = allImages.length > 1 ? allImages.slice(1) : allImages;
 
   return (
     <>
@@ -83,10 +297,20 @@ export default function ProjectDetail() {
           </div>
         </header>
 
-        {project.image && (
+        {/* Main Hero Project Image (Landscape Orientation with object-contain) */}
+        {heroImage && (
           <section className="mb-section-gap animate-on-scroll">
-            <div className="aspect-video w-full overflow-hidden border border-outline-variant bg-surface-container">
-              <img className="w-full h-full object-cover grayscale-hover" src={project.image} alt="" />
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between items-center font-mono-label text-xs uppercase text-secondary">
+                <span>PROJECT PREVIEW</span>
+                <span>LANDSCAPE ORIENTATION</span>
+              </div>
+              <LandscapeImage
+                src={heroImage}
+                alt={project.name}
+                onClick={() => setLightboxIndex(0)}
+                containerClassName="shadow-lg"
+              />
             </div>
           </section>
         )}
@@ -197,20 +421,35 @@ export default function ProjectDetail() {
           </section>
         )}
 
-        {(gallery.length > 0) && (
+        {/* Dynamic Project Image Gallery (All Uploaded Landscape Images) */}
+        {allImages.length > 0 && (
           <section className="mb-section-gap space-y-gutter animate-on-scroll">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter">
-              {gallery.slice(0, 2).map((url: string, i: number) => (
-                <div key={i} className="aspect-square bg-surface-container border border-outline-variant overflow-hidden">
-                  <img className="w-full h-full object-cover grayscale-hover" src={url} alt="" />
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-2 border-b border-primary pb-4">
+              <div>
+                <span className="font-mono-label text-mono-label text-secondary block mb-1">MEDIA_GALLERY</span>
+                <h2 className="font-headline-md text-headline-md uppercase">Project Showcase Gallery</h2>
+              </div>
+              <span className="font-mono-label text-xs text-secondary uppercase">
+                {allImages.length} {allImages.length === 1 ? 'LANDSCAPE IMAGE' : 'LANDSCAPE IMAGES'} // CLICK TO EXPAND
+              </span>
+            </div>
+
+            {/* Responsive Landscape Grid Supporting 10+ Images */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-gutter">
+              {allImages.map((url: string, index: number) => (
+                <div key={index} className="flex flex-col gap-2">
+                  <LandscapeImage
+                    src={url}
+                    alt={`${project.name} Screenshot ${index + 1}`}
+                    onClick={() => setLightboxIndex(index)}
+                  />
+                  <div className="flex justify-between items-center font-mono-label text-[10px] text-secondary opacity-70 px-1">
+                    <span>SCREENSHOT {String(index + 1).padStart(2, '0')}</span>
+                    <span>16:9 LANDSCAPE</span>
+                  </div>
                 </div>
               ))}
             </div>
-            {gallery.slice(2).map((url: string, i: number) => (
-              <div key={i + 2} className="aspect-video bg-surface-container border border-outline-variant overflow-hidden">
-                <img className="w-full h-full object-cover grayscale-hover" src={url} alt="" />
-              </div>
-            ))}
           </section>
         )}
 
@@ -226,6 +465,16 @@ export default function ProjectDetail() {
           </div>
         </section>
       </main>
+
+      {/* Fullscreen Interactive Lightbox Modal */}
+      {lightboxIndex !== null && (
+        <ImageLightbox
+          images={allImages}
+          selectedIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onNavigate={(index) => setLightboxIndex(index)}
+        />
+      )}
 
       <footer className="w-full py-stack-lg px-gutter flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto mt-section-gap border-t border-primary">
         <div className="font-display-lg text-headline-md text-primary mb-stack-md md:mb-0">ASWIN_S</div>
