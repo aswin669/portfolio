@@ -30,9 +30,62 @@ function toRoman(num: number): string {
   return roman || 'I';
 }
 
+const DEFAULT_SHOWCASE_ITEMS: ShowcaseItem[] = [
+  {
+    id: 1,
+    title: 'E-Commerce Platform',
+    category: 'Full-Stack App',
+    description: 'High-performance MERN stack online store with stripe integration and real-time inventory management.',
+    image_url: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80',
+    tags: ['React', 'Node.js', 'MongoDB', 'Stripe'],
+    demo_url: 'https://github.com/aswin669',
+    repo_url: 'https://github.com/aswin669'
+  },
+  {
+    id: 2,
+    title: 'SaaS Analytics Dashboard',
+    category: 'Web Application',
+    description: 'Real-time telemetry dashboard featuring interactive charts, export engine, and user role management.',
+    image_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
+    tags: ['Next.js', 'TypeScript', 'Tailwind', 'PostgreSQL'],
+    demo_url: 'https://github.com/aswin669',
+    repo_url: 'https://github.com/aswin669'
+  },
+  {
+    id: 3,
+    title: 'Editorial Creative Canvas',
+    category: 'Interactive UI',
+    description: 'Cinematic horizontal case-study gallery with scroll-driven diagonal card transitions.',
+    image_url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
+    tags: ['React', 'CSS Engine', 'Framer Logic', 'HTML5'],
+    demo_url: 'https://github.com/aswin669',
+    repo_url: 'https://github.com/aswin669'
+  },
+  {
+    id: 4,
+    title: 'AI Prompt Engineering Platform',
+    category: 'AI Application',
+    description: 'Full-stack AI assistant interface powered by LLM endpoints and streaming responses.',
+    image_url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
+    tags: ['OpenAI', 'Next.js', 'Fastify', 'Prisma'],
+    demo_url: 'https://github.com/aswin669',
+    repo_url: 'https://github.com/aswin669'
+  },
+  {
+    id: 5,
+    title: 'Task & Workflow OS',
+    category: 'Productivity Tool',
+    description: 'Collab workspace with kanban boards, real-time sync, and notification dispatch.',
+    image_url: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80',
+    tags: ['React', 'Express', 'Socket.io', 'MongoDB'],
+    demo_url: 'https://github.com/aswin669',
+    repo_url: 'https://github.com/aswin669'
+  }
+];
+
 export default function AnimatedShowcase() {
-  const [items, setItems] = useState<ShowcaseItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [items, setItems] = useState<ShowcaseItem[]>(DEFAULT_SHOWCASE_ITEMS);
+  const [loading, setLoading] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -49,13 +102,11 @@ export default function AnimatedShowcase() {
     fetch('/api/showcase/animated')
       .then((res) => (res.ok ? res.json() : []))
       .then((data) => {
-        setItems(Array.isArray(data) ? data : []);
-        setLoading(false);
+        if (Array.isArray(data) && data.length > 0) {
+          setItems(data);
+        }
       })
-      .catch(() => {
-        setItems([]);
-        setLoading(false);
-      });
+      .catch(() => {});
 
     return () => {
       mediaQuery.removeEventListener('change', handleMotionChange);
@@ -98,18 +149,6 @@ export default function AnimatedShowcase() {
       cancelAnimationFrame(animId);
     };
   }, [reducedMotion, items.length]);
-
-  if (loading) {
-    return (
-      <section className="bg-[#f5f5f3] dark:bg-[#0a0a0a] py-20 px-6 min-h-[400px] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-      </section>
-    );
-  }
-
-  if (items.length === 0) {
-    return null; // Gracefully hide if no active showcase items exist
-  }
 
   const N = items.length;
   // Current focal index based on scroll progress
@@ -241,6 +280,9 @@ export default function AnimatedShowcase() {
                       alt={item.title || item.category || 'Showcase portrait magazine cover'}
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       loading="lazy"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80';
+                      }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 opacity-60 group-hover:opacity-40 transition-opacity"></div>
 
