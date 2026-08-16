@@ -103,7 +103,18 @@ export default function AnimatedShowcase() {
       .then((res) => (res.ok ? res.json() : []))
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
-          setItems(data);
+          if (data.length < 5) {
+            // Merge database items with default showcase cards to guarantee a minimum 5-card deck
+            const merged = [...data];
+            DEFAULT_SHOWCASE_ITEMS.forEach((def, idx) => {
+              if (merged.length < 5 && !merged.some((i) => i.title === def.title)) {
+                merged.push({ ...def, id: 1000 + idx });
+              }
+            });
+            setItems(merged);
+          } else {
+            setItems(data);
+          }
         }
       })
       .catch(() => {});
@@ -158,7 +169,7 @@ export default function AnimatedShowcase() {
     <section
       id="showcase"
       ref={runwayRef}
-      className="relative w-full h-[380vh] bg-[#f5f5f3] dark:bg-[#080808] text-primary transition-colors border-y border-outline-variant/60"
+      className="relative w-full h-[260vh] bg-[#f5f5f3] dark:bg-[#080808] text-primary transition-colors border-y border-outline-variant/60"
     >
       {reducedMotion ? (
         /* Reduced Motion Fallback: Clean Responsive Grid */
