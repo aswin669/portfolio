@@ -3,33 +3,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import LightboxModal, { ShowcaseItem } from './LightboxModal';
 
-// Roman numerals helper for Chapter progress tracker (CHAPTER I, CHAPTER II, etc.)
-function toRoman(num: number): string {
-  const lookup: [string, number][] = [
-    ['M', 1000],
-    ['CM', 900],
-    ['D', 500],
-    ['CD', 400],
-    ['C', 100],
-    ['XC', 90],
-    ['L', 50],
-    ['XL', 40],
-    ['X', 10],
-    ['IX', 9],
-    ['V', 5],
-    ['IV', 4],
-    ['I', 1],
-  ];
-  let roman = '';
-  for (const [letter, value] of lookup) {
-    while (num >= value) {
-      roman += letter;
-      num -= value;
-    }
-  }
-  return roman || 'I';
-}
-
 const DEFAULT_SHOWCASE_ITEMS: ShowcaseItem[] = [
   {
     id: 1,
@@ -85,7 +58,6 @@ const DEFAULT_SHOWCASE_ITEMS: ShowcaseItem[] = [
 
 export default function AnimatedShowcase() {
   const [items, setItems] = useState<ShowcaseItem[]>(DEFAULT_SHOWCASE_ITEMS);
-  const [loading, setLoading] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -162,14 +134,12 @@ export default function AnimatedShowcase() {
   }, [reducedMotion, items.length]);
 
   const N = items.length;
-  // Current focal index based on scroll progress
-  const currentFocalIndex = Math.min(N - 1, Math.floor(scrollProgress * N));
 
   return (
     <section
       id="showcase"
       ref={runwayRef}
-      className="relative w-full h-[260vh] bg-[#f5f5f3] dark:bg-[#080808] text-primary transition-colors border-y border-outline-variant/60"
+      className="relative w-full h-[200vh] bg-[#f5f5f3] dark:bg-[#080808] text-primary transition-colors border-y border-outline-variant/60"
     >
       {reducedMotion ? (
         /* Reduced Motion Fallback: Clean Responsive Grid */
@@ -209,8 +179,9 @@ export default function AnimatedShowcase() {
       ) : (
         /* Sticky Viewport Animation Engine: DIAGONAL (Bottom-Right ↖ Top-Left) */
         <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between p-6 md:p-10 select-none">
+          
           {/* Top Bar Editorial Header */}
-          <div className="w-full max-w-7xl mx-auto flex items-center justify-between z-10 pt-2">
+          <div className="w-full max-w-7xl mx-auto flex items-center justify-between z-10 pt-2 shrink-0">
             <div className="flex items-center gap-3">
               <span className="w-6 h-[1px] bg-primary"></span>
               <span className="font-mono-label text-[11px] uppercase tracking-[0.25em] text-secondary font-semibold">
@@ -222,31 +193,58 @@ export default function AnimatedShowcase() {
             </span>
           </div>
 
-          {/* Watermark Background Typography */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden select-none opacity-[0.04]">
-            <span className="font-display-lg text-[13vw] font-black uppercase tracking-tighter whitespace-nowrap">
-              EDITORIAL COVER SHOWCASE
-            </span>
+          {/* Background Parallax Typography */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none">
+            <div 
+              className="absolute text-primary opacity-[0.03] dark:opacity-[0.025] font-display-lg text-[13vw] font-black tracking-tighter uppercase whitespace-nowrap transition-transform duration-75 ease-out"
+              style={{
+                left: '10%',
+                top: '15%',
+                transform: `translate3d(${-scrollProgress * 25}vw, ${-scrollProgress * 25}vh, 0)`,
+              }}
+            >
+              SELECTED WORK
+            </div>
+            <div 
+              className="absolute text-primary opacity-[0.03] dark:opacity-[0.025] font-display-lg text-[13vw] font-black tracking-tighter uppercase whitespace-nowrap transition-transform duration-75 ease-out"
+              style={{
+                left: '42%',
+                top: '55%',
+                transform: `translate3d(${-scrollProgress * 32}vw, ${-scrollProgress * 32}vh, 0)`,
+              }}
+            >
+              DIGITAL EXPERIENCES
+            </div>
+            <div 
+              className="absolute text-primary opacity-[0.03] dark:opacity-[0.025] font-display-lg text-[13vw] font-black tracking-tighter uppercase whitespace-nowrap transition-transform duration-75 ease-out"
+              style={{
+                left: '18%',
+                top: '75%',
+                transform: `translate3d(${-scrollProgress * 20}vw, ${-scrollProgress * 20}vh, 0)`,
+              }}
+            >
+              BUILT WITH PURPOSE
+            </div>
           </div>
 
           {/* Main Diagonal Cards Runway (Bottom-Right ↖ Top-Left Trajectory) */}
           <div className="relative w-full max-w-7xl mx-auto flex-1 flex items-center justify-center z-10 my-4">
             {items.map((item, index) => {
-              // Calculate delta relative to scroll position
-              // targetProgress for card i
+              // Calculate target progress mapping (focal point centers from 0.0 to 1.0)
+              // The last card centers exactly when the sticky section un-sticks
               const targetProgress = N > 1 ? index / (N - 1) : 0;
-              const delta = (scrollProgress - targetProgress) * (N > 1 ? N * 0.8 : 1);
+              const delta = (scrollProgress - targetProgress) * (N > 1 ? 1.6 : 1);
 
               // DIAGONAL MOVEMENT VECTOR:
               // When delta < 0 (entering from bottom-right):
               // translateX is POSITIVE (+vw), translateY is POSITIVE (+vh)
               // When delta > 0 (exiting to top-left):
               // translateX is NEGATIVE (-vw), translateY is NEGATIVE (-vh)
-              const baseDistX = 52; // vw distance
-              const baseDistY = 52; // vh distance
+              const baseDistX = 65; // vw distance
+              const baseDistY = 65; // vh distance
 
-              const varX = ((index % 3) - 1) * 8; // slight variation per card
-              const varY = (index % 2 === 0 ? -6 : 6); // slight vertical offset
+              const varX = ((index % 3) - 1) * 6; // slight variation per card
+              const varY = (index % 2 === 0 ? -4 : 4); // slight vertical offset
 
               const translateX = -delta * baseDistX + varX;
               const translateY = -delta * baseDistY + varY;
@@ -254,7 +252,7 @@ export default function AnimatedShowcase() {
               // SCALE TRANSITION:
               // Small (0.58) at bottom-right -> Focal Large (1.12) at center -> Small (0.58) at top-left
               const absDelta = Math.abs(delta);
-              const scale = Math.max(0.58, 1.12 - absDelta * 0.36);
+              const scale = Math.max(0.58, 1.12 - absDelta * 0.45);
 
               // ROTATION TRANSITION:
               // Dynamic subtle rotation: +3.5° (bottom-right) -> 0° (center) -> -3.5° (top-left)
@@ -262,10 +260,10 @@ export default function AnimatedShowcase() {
               const rotate = baseAngle * (1 - delta * 0.8);
 
               // Z-INDEX: Focal central card gets highest priority
-              const zIndex = Math.max(1, 50 - Math.round(absDelta * 20));
+              const zIndex = Math.max(1, 50 - Math.round(absDelta * 25));
 
               // OPACITY: Fades smoothly when entering/exiting offscreen
-              const opacity = Math.max(0, Math.min(1, 1.3 - absDelta * 0.75));
+              const opacity = Math.max(0, Math.min(1, 1.3 - absDelta * 1.0));
 
               return (
                 <div
@@ -330,54 +328,6 @@ export default function AnimatedShowcase() {
                 </div>
               );
             })}
-          </div>
-
-          {/* Bottom Bar Chapter Tracker & Progress Line (Matching Reference Images 1, 2, 3) */}
-          <div className="w-full max-w-7xl mx-auto z-10 pb-2 flex flex-col gap-3">
-            {/* Scroll Progress Bar */}
-            <div className="w-full bg-outline-variant/40 h-[2px] rounded-full overflow-hidden">
-              <div
-                className="bg-primary h-full transition-all duration-150 ease-out"
-                style={{ width: `${(scrollProgress * 100).toFixed(1)}%` }}
-              ></div>
-            </div>
-
-            {/* Chapter Items List */}
-            <div className="flex items-center justify-between overflow-x-auto gap-6 py-1 no-scrollbar">
-              <div className="flex items-center gap-6">
-                {items.slice(0, 6).map((item, idx) => {
-                  const isActive = idx === currentFocalIndex;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => {
-                        const targetPos = N > 1 ? idx / (N - 1) : 0;
-                        if (runwayRef.current) {
-                          const rect = runwayRef.current.getBoundingClientRect();
-                          const totalScrollable = rect.height - window.innerHeight;
-                          window.scrollTo({
-                            top: window.scrollY + rect.top + targetPos * totalScrollable,
-                            behavior: 'smooth',
-                          });
-                        }
-                      }}
-                      className={`flex items-center gap-2 font-mono-label text-xs uppercase transition-all ${
-                        isActive
-                          ? 'text-primary font-bold opacity-100 scale-105'
-                          : 'text-secondary opacity-50 hover:opacity-80'
-                      }`}
-                    >
-                      <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-primary' : 'bg-transparent'}`}></span>
-                      <span>CHAPTER {toRoman(idx + 1)}</span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <span className="font-mono-label text-[11px] text-secondary uppercase font-medium hidden sm:inline-block">
-                {currentFocalIndex + 1} OF {N} EDITORIAL COVER{N > 1 ? 'S' : ''}
-              </span>
-            </div>
           </div>
         </div>
       )}
