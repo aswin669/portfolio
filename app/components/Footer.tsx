@@ -118,7 +118,7 @@ export default function Footer() {
           <div className="md:col-span-4 flex flex-col justify-between gap-6">
             <div>
               <div className="font-mono-label text-xs uppercase tracking-[0.25em] text-neutral-400 font-bold mb-2">
-                ASWIN_S // CMS CORE
+                {siteName} // CMS CORE
               </div>
               <p className="font-body-md text-xs sm:text-sm text-neutral-400 max-w-xs leading-relaxed">
                 {tagline}
@@ -203,13 +203,13 @@ export default function Footer() {
       </div>
 
       {/* 3. Oversized ASWIN_S Wordmark at the Very Bottom with Scroll Parallax */}
-      <div className="w-full bg-black overflow-hidden pt-4 pb-0 flex justify-center items-end pointer-events-none select-none border-t border-neutral-900/50">
+      <div className="w-full bg-black overflow-hidden pt-6 pb-6 flex justify-center items-end pointer-events-none select-none border-t border-neutral-900/50">
         <div
           className="transition-transform duration-100 ease-out"
           style={{ transform: `translate3d(0, ${wordmarkY}px, 0)` }}
         >
-          <h1 className="font-display-lg text-[16vw] sm:text-[19vw] md:text-[22vw] font-black tracking-tighter uppercase leading-[0.78] text-neutral-100/90 whitespace-nowrap text-center transform translate-y-[12%]">
-            ASWIN_S
+          <h1 className="font-display-lg text-[13vw] sm:text-[15.5vw] md:text-[17vw] font-black tracking-tighter uppercase leading-[0.88] text-neutral-100/90 whitespace-nowrap text-center">
+            {siteName}
           </h1>
         </div>
       </div>
