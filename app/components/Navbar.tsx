@@ -179,18 +179,18 @@ export default function Navbar() {
         </div>
 
         {/* Mobile / Tablet Controls */}
-        <div className="flex lg:hidden items-center gap-2 shrink-0">
+        <div className="flex lg:hidden items-center gap-1 shrink-0">
           <button
             onClick={toggleDark}
-            className="p-2 rounded-lg text-secondary hover:text-primary hover:bg-surface-container-high transition-colors text-sm"
+            className="p-2.5 min-w-[44px] min-h-[44px] rounded-lg text-secondary hover:text-primary hover:bg-surface-container-high transition-colors text-base flex items-center justify-center"
             aria-label="Toggle dark mode"
           >
             {dark ? '☀' : '☾'}
           </button>
           <button
-            className="p-2 rounded-lg text-primary hover:bg-surface-container-high transition-colors material-symbols-outlined text-[24px]"
+            className="p-2.5 min-w-[44px] min-h-[44px] rounded-lg text-primary hover:bg-surface-container-high transition-colors material-symbols-outlined text-[24px] flex items-center justify-center"
             onClick={() => setMenuOpen((prev) => !prev)}
-            aria-label="Toggle menu"
+            aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
           >
             {menuOpen ? 'close' : 'menu'}
           </button>
@@ -199,15 +199,21 @@ export default function Navbar() {
 
       {/* Mobile & Tablet Overlay Menu */}
       {menuOpen && (
-        <div className="fixed inset-0 top-16 z-40 lg:hidden bg-surface/98 backdrop-blur-lg border-t border-outline-variant">
-          <div className="flex flex-col items-center gap-4 pt-6 pb-10 px-6 max-h-[calc(100vh-4rem)] overflow-y-auto">
+        <div
+          className="fixed inset-0 top-16 z-40 lg:hidden bg-surface/98 backdrop-blur-lg border-t border-outline-variant animate-fadeIn"
+          onClick={closeMenu}
+        >
+          <div
+            className="flex flex-col items-center gap-2 pt-6 pb-10 px-6 max-h-[calc(100vh-4rem)] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             {sectionMap.map((s) => {
               const active = isItemActive(s);
               return (
                 <a
                   key={s.sectionId}
-                  className={`text-sm font-semibold uppercase tracking-widest py-2 transition-colors ${
-                    active ? 'text-primary border-b-2 border-primary font-bold' : 'text-secondary hover:text-primary'
+                  className={`text-sm font-semibold uppercase tracking-widest px-4 py-3 min-h-[44px] w-full max-w-xs text-center flex items-center justify-center transition-colors rounded-sm ${
+                    active ? 'text-primary border-b-2 border-primary font-bold bg-surface-container-low' : 'text-secondary hover:text-primary'
                   }`}
                   href={s.href}
                   onClick={(e) => { closeMenu(); handleNavClick(e, s.href, s.sectionId); }}
@@ -219,7 +225,7 @@ export default function Navbar() {
             <div className="pt-4 w-full flex justify-center">
               <a
                 href="/contact"
-                className="bg-primary text-on-primary px-8 py-3 text-xs font-semibold uppercase tracking-widest rounded-sm w-full max-w-xs text-center"
+                className="bg-primary text-on-primary px-8 py-3.5 text-xs font-semibold uppercase tracking-widest rounded-sm w-full max-w-xs text-center min-h-[44px] flex items-center justify-center"
                 onClick={closeMenu}
               >
                 Hire Me

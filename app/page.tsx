@@ -9,10 +9,12 @@ import Testimonial from '@/components/Testimonial';
 import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
 import FloatingContactButton from '@/components/FloatingContactButton';
+import ASWINIntro from '@/components/ASWINIntro';
 
 export default function Home() {
   return (
     <main className="pt-16">
+      <ASWINIntro />
       <Navbar />
       <Hero />
       <FeaturedProjects />

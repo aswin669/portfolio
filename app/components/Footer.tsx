@@ -81,7 +81,7 @@ export default function Footer() {
               </span>
               <span className="text-neutral-600">+</span>
             </div>
-            <h2 className="font-display-lg text-3xl sm:text-5xl md:text-6xl font-extralight tracking-tight uppercase leading-tight text-white mb-4">
+            <h2 className="font-display-lg text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extralight tracking-tight uppercase leading-tight text-white mb-4">
               LET&apos;S BUILD SOMETHING GREAT TOGETHER.
             </h2>
             <p className="font-body-md text-neutral-400 text-sm sm:text-base max-w-xl">
@@ -89,9 +89,9 @@ export default function Footer() {
             </p>
           </div>
 
-          <div>
+          <div className="w-full sm:w-auto">
             <a
-              className="group flex items-center gap-4 bg-white text-black px-8 sm:px-10 py-4 sm:py-5 font-mono-label text-xs uppercase font-bold tracking-widest hover:bg-neutral-200 transition-all shadow-lg rounded-sm"
+              className="group flex items-center justify-center gap-4 bg-white text-black px-8 sm:px-10 py-4 sm:py-5 min-h-[48px] font-mono-label text-xs uppercase font-bold tracking-widest hover:bg-neutral-200 transition-all shadow-lg rounded-sm w-full sm:w-auto"
               href="https://portfolio-flame-nu-21.vercel.app/contact"
             >
               LET&apos;S TALK
@@ -126,7 +126,7 @@ export default function Footer() {
             </div>
 
             <button
-              className="flex items-center gap-2 group w-fit text-neutral-400 hover:text-white transition-colors"
+              className="flex items-center gap-2 group w-fit text-neutral-400 hover:text-white transition-colors min-h-[44px] py-2"
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
               <span className="font-mono-label text-xs uppercase tracking-widest border-b border-neutral-700 pb-0.5 group-hover:border-white transition-colors">
@@ -145,20 +145,20 @@ export default function Footer() {
                 INDEX ✦ 01
               </span>
               <nav className="flex flex-col gap-2">
-                <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors uppercase tracking-wider" href="/">HOME</a>
-                <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors uppercase tracking-wider" href="/about">ABOUT</a>
-                <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors uppercase tracking-wider" href="/tech-stack">SKILLS</a>
-                <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors uppercase tracking-wider" href="/experience">EXPERIENCE</a>
+                <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors uppercase tracking-wider py-1" href="/">HOME</a>
+                <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors uppercase tracking-wider py-1" href="/about">ABOUT</a>
+                <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors uppercase tracking-wider py-1" href="/tech-stack">SKILLS</a>
+                <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors uppercase tracking-wider py-1" href="/experience">EXPERIENCE</a>
               </nav>
             </div>
-            <div className="flex flex-col gap-3 pt-6 sm:pt-0">
+            <div className="flex flex-col gap-3 pt-0">
               <span className="font-mono-label text-xs uppercase tracking-[0.25em] text-neutral-500 font-bold mb-1">
                 INDEX ✦ 02
               </span>
               <nav className="flex flex-col gap-2">
-                <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors uppercase tracking-wider" href="/projects">PROJECTS</a>
-                <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors uppercase tracking-wider" href="/gallery">GALLERY</a>
-                <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors uppercase tracking-wider" href="/services">SERVICES</a>
+                <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors uppercase tracking-wider py-1" href="/projects">PROJECTS</a>
+                <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors uppercase tracking-wider py-1" href="/gallery">GALLERY</a>
+                <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors uppercase tracking-wider py-1" href="/services">SERVICES</a>
               </nav>
             </div>
           </div>
@@ -168,14 +168,14 @@ export default function Footer() {
             <span className="font-mono-label text-xs uppercase tracking-[0.25em] text-neutral-500 font-bold mb-1">
               CONNECT ✦ NETWORK
             </span>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-2.5">
-              <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors flex items-center gap-1.5 uppercase tracking-wider" href={github} target="_blank" rel="noopener noreferrer">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+              <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors flex items-center gap-1.5 uppercase tracking-wider min-h-[36px]" href={github} target="_blank" rel="noopener noreferrer">
                 GITHUB <span className="material-symbols-outlined text-[13px]">north_east</span>
               </a>
-              <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors flex items-center gap-1.5 uppercase tracking-wider" href={linkedin} target="_blank" rel="noopener noreferrer">
+              <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors flex items-center gap-1.5 uppercase tracking-wider min-h-[36px]" href={linkedin} target="_blank" rel="noopener noreferrer">
                 LINKEDIN <span className="material-symbols-outlined text-[13px]">north_east</span>
               </a>
-              <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors flex items-center gap-1.5 uppercase tracking-wider" href={`mailto:${email}`}>
+              <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors flex items-center gap-1.5 uppercase tracking-wider min-h-[36px]" href={`mailto:${email}`}>
                 EMAIL <span className="material-symbols-outlined text-[13px]">north_east</span>
               </a>
               <a

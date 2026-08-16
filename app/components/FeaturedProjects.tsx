@@ -49,7 +49,7 @@ export default function FeaturedProjects() {
                     ))}
                   </div>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <a className="font-label-caps text-label-caps inline-flex items-center gap-2 group-hover:underline" href={`/projects/${projects[0].slug}`}>
                     View Details <span className="material-symbols-outlined text-sm">arrow_forward</span>
                   </a>

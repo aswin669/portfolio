@@ -21,12 +21,15 @@ export default function FloatingContactButton() {
     <a
       href="https://portfolio-flame-nu-21.vercel.app/contact"
       aria-label="Contact us"
-      className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-[9000] group flex items-center justify-center select-none outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-full"
+      className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 z-30 group flex items-center justify-center select-none outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-full transition-transform duration-300 pointer-events-auto"
+      style={{
+        right: 'max(16px, env(safe-area-inset-right, 16px))',
+      }}
     >
-      <div className="relative w-28 h-28 sm:w-36 sm:h-36 flex items-center justify-center">
+      <div className="relative w-24 h-24 sm:w-36 sm:h-36 flex items-center justify-center">
         {/* Layer 1: Outer Rotating Circular Text Ring */}
         <div
-          className={`absolute inset-0 w-full h-full pointer-events-none transition-transform ${
+          className={`absolute inset-0 w-full h-full pointer-events-none ${
             reducedMotion ? '' : 'animate-spin-slow'
           }`}
           style={{
@@ -48,10 +51,10 @@ export default function FloatingContactButton() {
         </div>
 
         {/* Layer 2: Stationary Primary Theme Center Circle */}
-        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary text-on-primary border border-outline-variant/60 rounded-full flex items-center justify-center shadow-xl transition-transform duration-300 ease-out group-hover:scale-105">
+        <div className="w-14 h-14 sm:w-20 sm:h-20 bg-primary text-on-primary border border-outline-variant/60 rounded-full flex items-center justify-center shadow-xl transition-transform duration-300 ease-out group-hover:scale-105">
           {/* Layer 3: Stationary Minimalist Envelope Icon */}
           <svg
-            className="w-7 h-7 sm:w-9 sm:h-9 text-current"
+            className="w-6 h-6 sm:w-9 sm:h-9 text-current"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
