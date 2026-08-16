@@ -193,7 +193,7 @@ export default function Footer() {
 
         {/* Thin Divider Line with Copyright */}
         <div className="w-full border-t border-neutral-800 pt-6 pb-2 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono-label text-neutral-500">
-          <span>&copy; {new Date().getFullYear()} {siteName}. ALL RIGHTS RESERVED.</span>
+          <span>&copy; {new Date().getFullYear()} {siteName || 'ASWIN_S'}. ALL RIGHTS RESERVED.</span>
           <div className="flex items-center gap-6">
             <span className="uppercase tracking-widest hover:text-neutral-300 transition-colors cursor-pointer">PRIVACY</span>
             <span className="uppercase tracking-widest hover:text-neutral-300 transition-colors cursor-pointer">TERMS</span>
@@ -208,8 +208,8 @@ export default function Footer() {
           className="transition-transform duration-100 ease-out"
           style={{ transform: `translate3d(0, ${wordmarkY}px, 0)` }}
         >
-          <h1 className="font-display-lg text-[13vw] sm:text-[15.5vw] md:text-[17vw] font-black tracking-tighter uppercase leading-[0.88] text-neutral-100/90 whitespace-nowrap text-center">
-            {siteName}
+          <h1 className="font-display-lg text-[13vw] sm:text-[15.5vw] md:text-[17vw] lg:text-[18vw] font-black tracking-tighter uppercase leading-[0.88] text-neutral-100/90 whitespace-nowrap text-center">
+            {siteName || 'ASWIN_S'}
           </h1>
         </div>
       </div>
