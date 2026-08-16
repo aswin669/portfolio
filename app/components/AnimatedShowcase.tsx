@@ -34,53 +34,53 @@ const DEFAULT_SHOWCASE_ITEMS: ShowcaseItem[] = [
   {
     id: 1,
     title: 'E-Commerce Platform',
+    subtitle: 'MERN Stack & Stripe',
     category: 'Full-Stack App',
     description: 'High-performance MERN stack online store with stripe integration and real-time inventory management.',
     image_url: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80',
-    tags: ['React', 'Node.js', 'MongoDB', 'Stripe'],
-    demo_url: 'https://github.com/aswin669',
-    repo_url: 'https://github.com/aswin669'
+    display_order: 1,
+    active: true,
   },
   {
     id: 2,
     title: 'SaaS Analytics Dashboard',
+    subtitle: 'Next.js & Telemetry',
     category: 'Web Application',
     description: 'Real-time telemetry dashboard featuring interactive charts, export engine, and user role management.',
     image_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
-    tags: ['Next.js', 'TypeScript', 'Tailwind', 'PostgreSQL'],
-    demo_url: 'https://github.com/aswin669',
-    repo_url: 'https://github.com/aswin669'
+    display_order: 2,
+    active: true,
   },
   {
     id: 3,
     title: 'Editorial Creative Canvas',
+    subtitle: 'Interactive UI Engine',
     category: 'Interactive UI',
     description: 'Cinematic horizontal case-study gallery with scroll-driven diagonal card transitions.',
     image_url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
-    tags: ['React', 'CSS Engine', 'Framer Logic', 'HTML5'],
-    demo_url: 'https://github.com/aswin669',
-    repo_url: 'https://github.com/aswin669'
+    display_order: 3,
+    active: true,
   },
   {
     id: 4,
-    title: 'AI Prompt Engineering Platform',
+    title: 'AI Prompt Platform',
+    subtitle: 'LLM & Fastify',
     category: 'AI Application',
     description: 'Full-stack AI assistant interface powered by LLM endpoints and streaming responses.',
     image_url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
-    tags: ['OpenAI', 'Next.js', 'Fastify', 'Prisma'],
-    demo_url: 'https://github.com/aswin669',
-    repo_url: 'https://github.com/aswin669'
+    display_order: 4,
+    active: true,
   },
   {
     id: 5,
     title: 'Task & Workflow OS',
+    subtitle: 'Real-Time Sync',
     category: 'Productivity Tool',
     description: 'Collab workspace with kanban boards, real-time sync, and notification dispatch.',
     image_url: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80',
-    tags: ['React', 'Express', 'Socket.io', 'MongoDB'],
-    demo_url: 'https://github.com/aswin669',
-    repo_url: 'https://github.com/aswin669'
-  }
+    display_order: 5,
+    active: true,
+  },
 ];
 
 export default function AnimatedShowcase() {
