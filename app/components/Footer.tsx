@@ -157,7 +157,6 @@ export default function Footer() {
               </span>
               <nav className="flex flex-col gap-2">
                 <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors uppercase tracking-wider py-1" href="/projects">PROJECTS</a>
-                <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors uppercase tracking-wider py-1" href="/gallery">GALLERY</a>
                 <a className="font-mono-label text-xs text-neutral-400 hover:text-white transition-colors uppercase tracking-wider py-1" href="/services">SERVICES</a>
               </nav>
             </div>

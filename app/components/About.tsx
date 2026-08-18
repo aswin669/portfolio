@@ -27,11 +27,11 @@ export default function About() {
   }, []);
 
   return (
-    <main id="about" className="max-w-container-max mx-auto px-gutter pt-40 pb-section-gap">
+    <main id="about" className="max-w-container-max mx-auto px-gutter pt-24 sm:pt-32 md:pt-40 pb-section-gap">
       <section className="mb-section-gap">
-        <div className="flex flex-col md:flex-row gap-stack-lg items-end justify-between border-b border-primary pb-10">
+        <div className="flex flex-col md:flex-row gap-stack-lg items-start md:items-end justify-between border-b border-primary pb-10">
           <h1 className="font-display-lg text-display-lg-mobile md:text-display-lg uppercase leading-none">About Me</h1>
-          <div className="flex flex-col items-end">
+          <div className="flex flex-col items-start md:items-end">
             <p className="font-mono-label text-mono-label uppercase tracking-widest text-secondary">Location: Kerala / India</p>
             <p className="font-mono-label text-mono-label uppercase tracking-widest text-secondary">Specialization: MERN Stack Developer</p>
           </div>

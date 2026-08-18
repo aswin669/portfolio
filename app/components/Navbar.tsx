@@ -10,7 +10,6 @@ const sectionMap = [
   { href: '/experience', sectionId: 'experience', label: 'Experience' },
   { href: '/projects', sectionId: 'projects', label: 'Projects' },
   { href: '/services', sectionId: 'services', label: 'Services' },
-  { href: '/gallery', sectionId: 'gallery', label: 'Gallery' },
   { href: '/blog', sectionId: 'blog', label: 'Blog' },
   { href: '/resume', sectionId: 'resume', label: 'Resume' },
   { href: '/contact', sectionId: 'contact', label: 'Contact' },

@@ -33,8 +33,8 @@ export default function FeaturedProjects() {
         {projects[0] && (
           <div className="md:col-span-12 group cursor-pointer border border-outline-variant p-gutter hover:border-primary transition-colors">
             <div className="flex flex-col md:flex-row gap-gutter">
-              <div className="md:w-2/3 aspect-video relative overflow-hidden bg-surface-container">
-                <img className="w-full h-full object-cover grayscale-hover" src={projects[0].image || ''} alt="" />
+              <div className="md:w-2/3 aspect-[16/10] relative overflow-hidden bg-[#0a0a0c] border border-outline-variant/60 rounded-md">
+                <img className="w-full h-full object-contain object-top transition-transform duration-500 group-hover:scale-[1.02]" src={projects[0].image || ''} alt={projects[0].title || projects[0].name} />
               </div>
               <div className="md:w-1/3 flex flex-col justify-between py-stack-md">
                 <div>
@@ -79,8 +79,8 @@ export default function FeaturedProjects() {
         )}
         {projects.slice(1).map((p) => (
           <a key={p.id} href={`/projects/${p.slug}`} className="md:col-span-6 block group cursor-pointer border border-outline-variant p-gutter hover:border-primary transition-colors">
-            <div className="aspect-square mb-stack-md relative overflow-hidden bg-surface-container">
-              <img className="w-full h-full object-cover grayscale-hover" src={p.image || ''} alt="" />
+            <div className="aspect-[16/10] mb-stack-md relative overflow-hidden bg-[#0a0a0c] border border-outline-variant/60 rounded-md">
+              <img className="w-full h-full object-contain object-top transition-transform duration-500 group-hover:scale-[1.02]" src={p.image || ''} alt={p.title || p.name} />
             </div>
             <div className="flex justify-between items-start">
               <div>

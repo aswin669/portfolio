@@ -3,19 +3,19 @@
 export default function ResumePage() {
   return (
     <>
-      <main className="max-w-container-max mx-auto px-gutter pt-32 pb-section-gap">
-        <section className="flex flex-col md:flex-row justify-between items-end mb-section-gap border-b border-primary pb-stack-lg">
+      <main className="max-w-container-max mx-auto px-gutter pt-24 sm:pt-32 pb-section-gap">
+        <section className="flex flex-col md:flex-row justify-between items-start md:items-end mb-section-gap border-b border-primary pb-stack-lg gap-4">
           <div className="max-w-2xl">
             <h1 className="font-display-lg text-display-lg-mobile md:text-display-lg mb-stack-md uppercase">Resume</h1>
             <p className="font-body-lg text-body-lg text-secondary">Self-taught software developer with a focus on MERN stack, experienced in crafting dynamic front-end interfaces and robust back-end solutions.</p>
           </div>
-           <div className="mt-stack-lg md:mt-0">
+           <div className="mt-stack-lg md:mt-0 w-full sm:w-auto">
             <a
               href="/Aswin_S_Premium_ATS_Resume.pdf"
               download="Aswin_S_Premium_ATS_Resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-stack-md bg-primary text-on-primary px-8 py-5 font-label-caps text-label-caps hover:opacity-85 transition-all duration-300"
+              className="group flex items-center justify-center gap-stack-md bg-primary text-on-primary px-8 py-4 sm:py-5 font-label-caps text-label-caps hover:opacity-85 transition-all duration-300 w-full sm:w-auto min-h-[48px]"
             >
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>download</span>
               DOWNLOAD RESUME
@@ -25,10 +25,10 @@ export default function ResumePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-y-stack-lg md:gap-x-12">
           <aside className="md:col-span-3">
-            <div className="sticky top-32 flex flex-col gap-12">
+            <div className="md:sticky md:top-32 flex flex-col gap-8 sm:gap-12">
               <div>
                 <span className="font-mono-label text-mono-label text-outline block mb-4 uppercase">Identity</span>
-                <div className="w-full aspect-square bg-surface-container mb-stack-md overflow-hidden grayscale-hover">
+                <div className="w-full aspect-square bg-surface-container mb-stack-md overflow-hidden grayscale-hover max-w-[200px] sm:max-w-none">
                   <img className="w-full h-full object-cover" src="/hero-image.jpg" />
                 </div>
                 <h2 className="font-headline-md text-headline-md mb-1 uppercase">ASWIN S</h2>
@@ -83,7 +83,7 @@ export default function ResumePage() {
                 <h3 className="font-headline-md text-headline-md uppercase">Career Experience</h3>
                 <span className="font-mono-label text-mono-label text-outline">02</span>
               </div>
-              <div className="relative pl-12">
+              <div className="relative pl-6 sm:pl-12">
                 <div className="absolute left-[3.5px] top-0 bottom-0 w-[1px] bg-primary"></div>
                 <div className="flex flex-col gap-20">
                   <div className="relative">

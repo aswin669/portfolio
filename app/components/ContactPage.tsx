@@ -124,7 +124,7 @@ export default function ContactPage() {
             <div className="space-y-stack-lg">
               <div className="pb-stack-lg border-b border-outline-variant">
                 <h3 className="font-mono-label text-mono-label text-secondary mb-4">CONTACT DETAILS</h3>
-                <p className="font-headline-md text-headline-md mb-2">{email}</p>
+                <p className="font-headline-md text-base sm:text-headline-md break-all sm:break-normal mb-2">{email}</p>
                 <p className="font-body-md text-body-md text-secondary">+91 81570 99669</p>
               </div>
               <div className="pb-stack-lg border-b border-outline-variant">

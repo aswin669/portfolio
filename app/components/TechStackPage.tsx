@@ -175,9 +175,9 @@ export default function TechStackPage() {
         <section className="mt-section-gap reveal overflow-hidden border border-primary relative group" style={{ transitionDelay: '500ms' }}>
           <div className="h-96 w-full relative">
             <div className="absolute inset-0 z-10 bg-black/10 group-hover:bg-black/0 transition-colors duration-700"></div>
-            <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-              <div className="border border-on-primary bg-primary text-on-primary px-12 py-6">
-                <p className="font-display-lg text-headline-md tracking-[0.2em]">ENGINEERING_EXCELLENCE</p>
+            <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none p-4">
+              <div className="border border-on-primary bg-primary text-on-primary px-4 sm:px-12 py-4 sm:py-6 text-center max-w-full">
+                <p className="font-display-lg text-sm sm:text-base md:text-headline-md tracking-wider sm:tracking-[0.2em] break-all sm:break-normal">ENGINEERING_EXCELLENCE</p>
               </div>
             </div>
             <div className="bg-cover bg-center w-full h-full grayscale hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuC4e9rtdlE2uEgDE-8g2NjOufeIsxN_gB45qPbsL05OU0Ed9lntlnkEnwHNkYWF8yG1nw4_QFOWKDyhIp0HNuDy8kmS1SrSO1DG_l2sGqh4pu6ip11NJzrMBoPt7hUgtnlm0RapPp5u9mVcJNHBybjAgzgaTe7FipcLe13epSFM6dyTOjmIVHpoOYdAC2NCo-Zt0YrzO70DOih2gx1WqzwdwRnRDOkGVN8c3tgtbzXM1lXGo70Y7qXj')", backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
@@ -188,7 +188,7 @@ export default function TechStackPage() {
       <footer className="w-full py-stack-lg px-gutter flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto mt-section-gap border-t border-primary">
         <div className="font-display-lg text-headline-md text-primary mb-8 md:mb-0">ASWIN_S</div>
         <div className="flex flex-col items-center md:items-end gap-stack-sm">
-          <nav className="flex gap-gutter mb-4">
+          <nav className="flex flex-wrap justify-center gap-x-4 gap-y-2 mb-4">
             <a className="font-mono-label text-mono-label text-secondary hover:text-primary hover:underline transition-all duration-200 ease-in-out" href="/">Home</a>
             <a className="font-mono-label text-mono-label text-secondary hover:text-primary hover:underline transition-all duration-200 ease-in-out" href="/about">About</a>
             <a className="font-mono-label text-mono-label text-secondary hover:text-primary hover:underline transition-all duration-200 ease-in-out" href="/tech-stack">Skills</a>

@@ -32,7 +32,7 @@ export default function ServicesPage() {
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-t border-l border-outline-variant">
-          <div className="service-card group p-stack-lg border-r border-b border-outline-variant flex flex-col justify-between aspect-square">
+          <div className="service-card group p-stack-lg border-r border-b border-outline-variant flex flex-col justify-between aspect-auto sm:aspect-square min-h-[260px]">
             <div className="flex justify-between items-start mb-stack-lg">
               <span className="font-mono-label text-mono-label text-secondary group-hover:text-surface-variant transition-colors">01</span>
               <span className="material-symbols-outlined service-icon text-primary text-3xl">web_asset</span>
@@ -48,7 +48,7 @@ export default function ServicesPage() {
             </div>
           </div>
 
-          <div className="service-card group p-stack-lg border-r border-b border-outline-variant flex flex-col justify-between aspect-square">
+          <div className="service-card group p-stack-lg border-r border-b border-outline-variant flex flex-col justify-between aspect-auto sm:aspect-square min-h-[260px]">
             <div className="flex justify-between items-start mb-stack-lg">
               <span className="font-mono-label text-mono-label text-secondary group-hover:text-surface-variant transition-colors">02</span>
               <span className="material-symbols-outlined service-icon text-primary text-3xl">terminal</span>
@@ -64,7 +64,7 @@ export default function ServicesPage() {
             </div>
           </div>
 
-          <div className="service-card group p-stack-lg border-r border-b border-outline-variant flex flex-col justify-between aspect-square">
+          <div className="service-card group p-stack-lg border-r border-b border-outline-variant flex flex-col justify-between aspect-auto sm:aspect-square min-h-[260px]">
             <div className="flex justify-between items-start mb-stack-lg">
               <span className="font-mono-label text-mono-label text-secondary group-hover:text-surface-variant transition-colors">03</span>
               <span className="material-symbols-outlined service-icon text-primary text-3xl">database</span>
@@ -80,7 +80,7 @@ export default function ServicesPage() {
             </div>
           </div>
 
-          <div className="service-card group p-stack-lg border-r border-b border-outline-variant flex flex-col justify-between aspect-square">
+          <div className="service-card group p-stack-lg border-r border-b border-outline-variant flex flex-col justify-between aspect-auto sm:aspect-square min-h-[260px]">
             <div className="flex justify-between items-start mb-stack-lg">
               <span className="font-mono-label text-mono-label text-secondary group-hover:text-surface-variant transition-colors">04</span>
               <span className="material-symbols-outlined service-icon text-primary text-3xl">security</span>
@@ -96,7 +96,7 @@ export default function ServicesPage() {
             </div>
           </div>
 
-          <div className="service-card group p-stack-lg border-r border-b border-outline-variant flex flex-col justify-between aspect-square">
+          <div className="service-card group p-stack-lg border-r border-b border-outline-variant flex flex-col justify-between aspect-auto sm:aspect-square min-h-[260px]">
             <div className="flex justify-between items-start mb-stack-lg">
               <span className="font-mono-label text-mono-label text-secondary group-hover:text-surface-variant transition-colors">05</span>
               <span className="material-symbols-outlined service-icon text-primary text-3xl">sync_alt</span>
@@ -112,7 +112,7 @@ export default function ServicesPage() {
             </div>
           </div>
 
-          <div className="service-card group p-stack-lg border-r border-b border-outline-variant flex flex-col justify-between aspect-square">
+          <div className="service-card group p-stack-lg border-r border-b border-outline-variant flex flex-col justify-between aspect-auto sm:aspect-square min-h-[260px]">
             <div className="flex justify-between items-start mb-stack-lg">
               <span className="font-mono-label text-mono-label text-secondary group-hover:text-surface-variant transition-colors">06</span>
               <span className="material-symbols-outlined service-icon text-primary text-3xl">speed</span>

@@ -37,21 +37,21 @@ export default function ProjectsPage() {
 
   return (
     <main id="projects" className="pt-32 pb-section-gap max-w-container-max mx-auto px-gutter overflow-hidden">
-      <header className="mb-24 flex flex-col md:flex-row justify-between items-end gap-stack-lg border-b border-primary pb-stack-lg">
+      <header className="mb-12 sm:mb-24 flex flex-col md:flex-row justify-between items-start md:items-end gap-stack-lg border-b border-primary pb-stack-lg">
         <div className="max-w-2xl">
           <span className="font-mono-label text-mono-label uppercase tracking-widest text-secondary block mb-4">// SELECTED_WORKS_06</span>
-          <h1 className="font-display-lg text-display-lg leading-none">MERN STACK<br/>PORTFOLIO.</h1>
+          <h1 className="font-display-lg text-display-lg-mobile md:text-display-lg leading-none">MERN STACK<br/>PORTFOLIO.</h1>
         </div>
-        <p className="font-body-lg text-body-lg text-secondary max-w-md text-right">
+        <p className="font-body-lg text-body-lg text-secondary max-w-md text-left md:text-right">
           A curated selection of full-stack web applications built with modern JavaScript technologies.
         </p>
       </header>
 
-      <div className="grid grid-cols-12 gap-y-32 gap-x-gutter">
+      <div className="grid grid-cols-12 gap-y-16 sm:gap-y-32 gap-x-gutter">
         {items.map((project, i) => (
           <div key={project.id} className={`col-span-12 group project-card ${i % 2 === 1 ? 'md:col-start-2 md:col-span-10' : ''}`}>
-            <div className="relative overflow-hidden aspect-[21/9] bg-surface-container mb-stack-lg border border-outline-variant">
-              <div className="project-image w-full h-full bg-center bg-cover" style={{ backgroundImage: `url('${project.image || ''}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
+            <div className="relative overflow-hidden aspect-video md:aspect-[16/10] bg-[#0a0a0c] mb-stack-lg border border-outline-variant rounded-md">
+              <img className="w-full h-full object-contain object-top transition-transform duration-700 group-hover:scale-[1.02]" src={project.image || ''} alt={project.name || project.title} />
               <div className="absolute top-4 right-4 bg-primary text-on-primary px-3 py-1 font-mono-label text-mono-label">{project.featured ? '[ FEATURED ]' : `[ ${project.status || 'DRAFT'} ]`}</div>
             </div>
             <div className="flex flex-col md:flex-row justify-between gap-stack-md">
@@ -67,7 +67,7 @@ export default function ProjectsPage() {
                     <span key={t} className="font-mono-label text-[10px] border border-outline-variant px-3 py-1 uppercase">{t}</span>
                   ))}
                 </div>
-                <div className="flex gap-4">
+                <div className="flex flex-wrap gap-3">
                   <a href={`/projects/${project.slug}`} className="inline-flex items-center gap-2 bg-primary text-on-primary px-6 py-3 font-label-caps text-label-caps hover:opacity-80 transition-opacity">
                     VIEW CASE
                     <span className="material-symbols-outlined text-[16px]">arrow_outward</span>
